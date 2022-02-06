@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      lang="en">
+
+<h:head>
+    <f:facet name="first">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+        <meta name="apple-mobile-web-app-capable" content="yes"/>
+    </f:facet>
+    <title><ui:insert name="title">Gymmi</ui:insert></title>
+    <h:outputScript name="js/layout.js" library="freya-layout"/>
+    <ui:insert name="head"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com"/>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100&amp;display=swap" rel="stylesheet"/>
+    <style>
+        ._5pct {
+            width: 5%;
+        }
+
+        ._10pct {
+            width: 10%;
+        }
+
+        ._15pct {
+            width: 15%;
+        }
+
+        ._20pct {
+            width: 20%;
+        }
+
+        ._30pct {
+            width: 30%;
+        }
+
+        ._35pct {
+            width: 30%;
+        }
+
+        ._40pct {
+            width: 40%;
+        }
+
+        ._50pct {
+            width: 50%;
+        }
+
+        ._60pct {
+            width: 60%;
+        }
+
+        ._70pct {
+            width: 70%;
+        }
+
+        ._80pct {
+            width: 80%;
+        }
+
+        ._90pct {
+            width: 90%;
+        }
+
+        ._100pct {
+            width: 100%;
+        }
+
+        .menu-wrapper .sidebar-logo img {
+            width: 60px;
+            height: 50px;
+            right: 20px;
+            position: relative;
+        }
+
+        .layout-topbar-logo > img {
+            height: 50px !important;
+            top: -15px !important;
+            position: relative;
+        }
+
+        .ui-scrollpanel {
+            border: none !important;
+        }
+
+        .ui-scrollpanel-hbar {
+            display: none !important;
+        }
+
+        .my-input {
+            width: 90% !important;
+        }
+
+        .ui-panelgrid-content {
+            padding: 10px;
+        }
+
+        .ui-datatable-header {
+            background: #293241 !important;
+        }
+
+        .myInput {
+            width: 90%;
+        }
+
+        .ui-blockui-content {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+
+        tr.ui-state-highlight {
+            background: rgba(76, 76, 76, 0.53) !important;
+        }
+    </style>
+</h:head>
+
+<h:body styleClass="#{guestPreferences.inputStyleClass}">
+
+    <p:blockUI widgetVar="loading-block" block="main-panel">
+        <p:graphicImage library="svg-loaders" name="oval.svg" height="150" cache="true"/>
+    </p:blockUI>
+
+    <p:growl for="mainNotificationFor" showDetail="true">
+        <p:autoUpdate/>
+    </p:growl>
+
+    <p:outputPanel id="main-panel"
+                   class="layout-wrapper layout-topbar-#{guestPreferences.topbarTheme} layout-menu-#{guestPreferences.menuTheme} #{guestPreferences.menuMode}">
+        <ui:include src="./topbar.xhtml"></ui:include>
+        #{loginBean.checkAuthentication()}
+
+
+        <div class="layout-main">
+            <div class="layout-content">
+                <p:growl for="mainNotificationFor" showDetail="true" showSummary="true" life="3000"/>
+                <c:if test="#{not empty loginBean.loggedInUser}">
+                    <ui:insert name="content"></ui:insert>
+                </c:if>
+            </div>
+        </div>
+
+        <p:ajaxStatus style="width:32px;height:32px;position:fixed;right:7px;bottom:7px">
+            <f:facet name="start">
+                <i class="pi pi-spin pi-spinner ajax-loader" aria-hidden="true"></i>
+            </f:facet>
+
+            <f:facet name="complete">
+                <h:outputText value=""/>
+            </f:facet>
+        </p:ajaxStatus>
+        <div class="layout-mask modal-in"></div>
+    </p:outputPanel>
+    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
+        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-flat"/>
+        <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes"/>
+    </p:confirmDialog>
+    <h:outputStylesheet name="css/primeicons.css" library="freya-layout"/>
+    <h:outputStylesheet name="css/primeflex.min.css" library="freya-layout"/>
+    <h:outputStylesheet name="css/#{guestPreferences.layout}.css" library="freya-layout"/>
+    <h:outputStylesheet name="css/demo-#{guestPreferences.darkMode}.css" library="demo"/>
+
+    <script>
+        const showLoading = () => {
+            PF('loading-block').show();
+        }
+        const hideLoading = () => {
+            PF('loading-block').hide();
+        }
+    </script>
+</h:body>
+
+</html>

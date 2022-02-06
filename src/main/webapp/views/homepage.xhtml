@@ -1,0 +1,41 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">Gymmi - Homepage</ui:define>
+    <ui:define name="content">
+        <style>
+            body {
+                overflow: hidden;
+            }
+            #memberNumber{
+                width: 100%;
+                padding: 10px;
+                font-size: larger;
+            }
+        </style>
+        <div class="p-grid">
+            <div class="p-col">
+                <div class="card">
+                  <h:form prependId="false">
+                      <h4>Gymmi - Member Search</h4>
+                      <div class="ui-inputgroup">
+                          <div class="ui-inputgroup-addon"><i class="pi pi-search"></i></div>
+                          <p:inputText id="memberNumber" placeholder="Member Number" value="#{homepageBean.numberSearch}" >
+                              <p:ajax event="change" listener="#{homepageBean.search}" />
+                          </p:inputText>
+                      </div>
+                  </h:form>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            $('#memberNumber').focus();
+        </script>
+    </ui:define>
+
+</ui:composition>

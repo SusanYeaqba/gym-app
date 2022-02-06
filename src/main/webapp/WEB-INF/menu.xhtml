@@ -1,0 +1,31 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:fr="http://primefaces.org/freya">
+
+    <div class="menu-wrapper">
+        <div class="sidebar-logo">
+            <h:link outcome="/views/homepage">
+                <p:graphicImage name="images/logo-mini.png"/>
+            </h:link>
+            <a href="#" class="sidebar-pin" title="Toggle Menu">
+                <span class="pin"></span>
+            </a>
+
+        </div>
+        <div class="layout-menu-container">
+            <h:form id="menuform" rendered="#{not empty loginBean.loggedInUser}">
+                <fr:menu widgetVar="FreyaMenuWidget">
+                    <p:menuitem id="om_dashboard" value="Dashboard" icon="pi pi-home" outcome="/views/homepage"/>
+                    <p:menuitem id="om_users" value="User Accounts" icon="pi pi-key" outcome="/views/administration/users"/>
+                    <p:menuitem id="om_members" value="Members List" icon="pi pi-users" outcome="/views/administration/members"/>
+                </fr:menu>
+            </h:form>
+        </div>
+    </div>
+
+
+</ui:composition>
