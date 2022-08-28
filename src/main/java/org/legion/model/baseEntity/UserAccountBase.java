@@ -24,10 +24,8 @@ private String DeletedBy;
 private String Username; 
 private String Password; 
 private String Role; 
-private String Email; 
 private Date LastLogin; 
-private boolean Enabled; 
-private String FullName; 
+private boolean Active; 
 
     public UserAccountBase() {
     }
@@ -153,18 +151,6 @@ return this.Role;}
 this.Role = Role;}
 
 
- public String getEmail() {
-return this.Email;}
-
-
-
-
-  public void setEmail(String Email) {
-
-
-this.Email = Email;}
-
-
  public Date getLastLogin() {
 return this.LastLogin;}
 
@@ -177,28 +163,16 @@ return this.LastLogin;}
 this.LastLogin = LastLogin;}
 
 
- public boolean getEnabled() {
-return this.Enabled;}
+ public boolean getActive() {
+return this.Active;}
 
 
 
 
-  public void setEnabled(boolean Enabled) {
+  public void setActive(boolean Active) {
 
 
-this.Enabled = Enabled;}
-
-
- public String getFullName() {
-return this.FullName;}
-
-
-
-
-  public void setFullName(String FullName) {
-
-
-this.FullName = FullName;}
+this.Active = Active;}
 
 
  

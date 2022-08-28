@@ -36,15 +36,21 @@ entity_record.setUpdateBy(rs.getString("update_by"));
 entity_record.setDeletedAt(rs.getLong("deleted_at"));
 entity_record.setDeletedBy(rs.getString("deleted_by")); 
 entity_record.setMemberId(rs.getString("member_id")); 
+entity_record.setType(rs.getString("type")); 
+entity_record.setMaxEntryCount(rs.getBigDecimal("max_entry_count"));
+entity_record.setConsumedEntryCount(rs.getBigDecimal("consumed_entry_count"));
 entity_record.setStartDate(rs.getDate("start_date"));
 entity_record.setEndDate(rs.getDate("end_date"));
-entity_record.setSubscriptionType(rs.getString("subscription_type")); 
-entity_record.setSubscriptionLevel(rs.getString("subscription_level")); 
-entity_record.setRemainingEntries(rs.getInt("remaining_entries"));
+entity_record.setFrozen(rs.getBoolean("frozen"));
+entity_record.setFrozenTill(rs.getDate("frozen_till"));
+entity_record.setSuspended(rs.getBoolean("suspended"));
+entity_record.setRemarks(rs.getString("remarks")); 
 entity_record.setPrice(rs.getBigDecimal("price"));
-entity_record.setDiscountPct(rs.getBigDecimal("discount_pct"));
+entity_record.setDiscount(rs.getBigDecimal("discount"));
 entity_record.setFinalPrice(rs.getBigDecimal("final_price"));
-entity_record.setPaid(rs.getBigDecimal("paid"));
+entity_record.setPaidAmount(rs.getBigDecimal("paid_amount"));
+entity_record.setFullPaid(rs.getBoolean("full_paid"));
+entity_record.setBonusPeriod(rs.getBigDecimal("bonus_period"));
         }
        }catch(Exception e){
         logger.error("Error", e); throw e;       }
@@ -62,7 +68,7 @@ catch(SQLException sqlex){logger.error("SQL Error", sqlex); throw sqlex;}       
 Connection con = null;
   PreparedStatement ps = null;
  try{ con = org.legion.util.MainDataSource.getConnection(); 
- ps = con.prepareStatement("INSERT INTO subscription VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+ ps = con.prepareStatement("INSERT INTO subscription VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 ps.setString(1,record.getRowId()); 
 ps.setLong(2,record.getCreatedAt()); 
 ps.setString(3,record.getCreatedBy()); 
@@ -71,17 +77,24 @@ ps.setString(5,record.getUpdateBy());
 ps.setLong(6,record.getDeletedAt()); 
 ps.setString(7,record.getDeletedBy()); 
 ps.setString(8,record.getMemberId()); 
-if(record.getStartDate() !=null){ps.setDate(9, new java.sql.Date(record.getStartDate().getTime()));} 
- else{ps.setDate(9,new java.sql.Date(new java.util.Date().getTime()));}
-if(record.getEndDate() !=null){ps.setDate(10, new java.sql.Date(record.getEndDate().getTime()));} 
- else{ps.setDate(10,new java.sql.Date(new java.util.Date().getTime()));}
-ps.setString(11,record.getSubscriptionType()); 
-ps.setString(12,record.getSubscriptionLevel()); 
-ps.setInt(13,record.getRemainingEntries()); 
-ps.setBigDecimal(14,record.getPrice()); 
-ps.setBigDecimal(15,record.getDiscountPct()); 
-ps.setBigDecimal(16,record.getFinalPrice()); 
-ps.setBigDecimal(17,record.getPaid()); 
+ps.setString(9,record.getType()); 
+ps.setBigDecimal(10,record.getMaxEntryCount()); 
+ps.setBigDecimal(11,record.getConsumedEntryCount()); 
+if(record.getStartDate() !=null){ps.setDate(12, new java.sql.Date(record.getStartDate().getTime()));} 
+ else{ps.setDate(12,new java.sql.Date(new java.util.Date().getTime()));}
+if(record.getEndDate() !=null){ps.setDate(13, new java.sql.Date(record.getEndDate().getTime()));} 
+ else{ps.setDate(13,new java.sql.Date(new java.util.Date().getTime()));}
+ps.setBoolean(14,record.getFrozen()); 
+if(record.getFrozenTill() !=null){ps.setDate(15, new java.sql.Date(record.getFrozenTill().getTime()));} 
+ else{ps.setDate(15,new java.sql.Date(new java.util.Date().getTime()));}
+ps.setBoolean(16,record.getSuspended()); 
+ps.setString(17,record.getRemarks()); 
+ps.setBigDecimal(18,record.getPrice()); 
+ps.setBigDecimal(19,record.getDiscount()); 
+ps.setBigDecimal(20,record.getFinalPrice()); 
+ps.setBigDecimal(21,record.getPaidAmount()); 
+ps.setBoolean(22,record.getFullPaid()); 
+ps.setBigDecimal(23,record.getBonusPeriod()); 
 
  int i = ps.executeUpdate();} catch(Exception e){logger.error("Error", e);}
         finally{ 
@@ -106,7 +119,7 @@ ps.setBigDecimal(17,record.getPaid());
   public void updateRecord(Subscription record) { Connection con = null;
  PreparedStatement ps = null;
  try { con = org.legion.util.MainDataSource.getConnection();
- ps = con.prepareStatement("UPDATE subscription SET row_id = ?, created_at = ?, created_by = ?, updated_at = ?, update_by = ?, deleted_at = ?, deleted_by = ?, member_id = ?, start_date = ?, end_date = ?, subscription_type = ?, subscription_level = ?, remaining_entries = ?, price = ?, discount_pct = ?, final_price = ?, paid = ? WHERE row_id=? ");
+ ps = con.prepareStatement("UPDATE subscription SET row_id = ?, created_at = ?, created_by = ?, updated_at = ?, update_by = ?, deleted_at = ?, deleted_by = ?, member_id = ?, type = ?, max_entry_count = ?, consumed_entry_count = ?, start_date = ?, end_date = ?, frozen = ?, frozen_till = ?, suspended = ?, remarks = ?, price = ?, discount = ?, final_price = ?, paid_amount = ?, full_paid = ?, bonus_period = ? WHERE row_id=? ");
 ps.setString(1,record.getRowId()); 
 ps.setLong(2,record.getCreatedAt()); 
 ps.setString(3,record.getCreatedBy()); 
@@ -115,18 +128,25 @@ ps.setString(5,record.getUpdateBy());
 ps.setLong(6,record.getDeletedAt()); 
 ps.setString(7,record.getDeletedBy()); 
 ps.setString(8,record.getMemberId()); 
-if (record.getStartDate() != null) {ps.setDate(9,new java.sql.Date(record.getStartDate().getTime()));}
-else{ps.setDate(9,new java.sql.Date(new java.util.Date().getTime()));} 
-if (record.getEndDate() != null) {ps.setDate(10,new java.sql.Date(record.getEndDate().getTime()));}
-else{ps.setDate(10,new java.sql.Date(new java.util.Date().getTime()));} 
-ps.setString(11,record.getSubscriptionType()); 
-ps.setString(12,record.getSubscriptionLevel()); 
-ps.setInt(13,record.getRemainingEntries()); 
-ps.setBigDecimal(14,record.getPrice()); 
-ps.setBigDecimal(15,record.getDiscountPct()); 
-ps.setBigDecimal(16,record.getFinalPrice()); 
-ps.setBigDecimal(17,record.getPaid()); 
-ps.setString(18,record.getRowId()); 
+ps.setString(9,record.getType()); 
+ps.setBigDecimal(10,record.getMaxEntryCount()); 
+ps.setBigDecimal(11,record.getConsumedEntryCount()); 
+if (record.getStartDate() != null) {ps.setDate(12,new java.sql.Date(record.getStartDate().getTime()));}
+else{ps.setDate(12,new java.sql.Date(new java.util.Date().getTime()));} 
+if (record.getEndDate() != null) {ps.setDate(13,new java.sql.Date(record.getEndDate().getTime()));}
+else{ps.setDate(13,new java.sql.Date(new java.util.Date().getTime()));} 
+ps.setBoolean(14,record.getFrozen()); 
+if (record.getFrozenTill() != null) {ps.setDate(15,new java.sql.Date(record.getFrozenTill().getTime()));}
+else{ps.setDate(15,new java.sql.Date(new java.util.Date().getTime()));} 
+ps.setBoolean(16,record.getSuspended()); 
+ps.setString(17,record.getRemarks()); 
+ps.setBigDecimal(18,record.getPrice()); 
+ps.setBigDecimal(19,record.getDiscount()); 
+ps.setBigDecimal(20,record.getFinalPrice()); 
+ps.setBigDecimal(21,record.getPaidAmount()); 
+ps.setBoolean(22,record.getFullPaid()); 
+ps.setBigDecimal(23,record.getBonusPeriod()); 
+ps.setString(24,record.getRowId()); 
    int i = ps.executeUpdate();
  } catch(Exception e){
    logger.error("Error", e);}
@@ -161,15 +181,21 @@ entity_record.setUpdateBy(rs.getString("update_by"));
 entity_record.setDeletedAt(rs.getLong("deleted_at"));
 entity_record.setDeletedBy(rs.getString("deleted_by")); 
 entity_record.setMemberId(rs.getString("member_id")); 
+entity_record.setType(rs.getString("type")); 
+entity_record.setMaxEntryCount(rs.getBigDecimal("max_entry_count"));
+entity_record.setConsumedEntryCount(rs.getBigDecimal("consumed_entry_count"));
 entity_record.setStartDate(rs.getDate("start_date"));
 entity_record.setEndDate(rs.getDate("end_date"));
-entity_record.setSubscriptionType(rs.getString("subscription_type")); 
-entity_record.setSubscriptionLevel(rs.getString("subscription_level")); 
-entity_record.setRemainingEntries(rs.getInt("remaining_entries"));
+entity_record.setFrozen(rs.getBoolean("frozen"));
+entity_record.setFrozenTill(rs.getDate("frozen_till"));
+entity_record.setSuspended(rs.getBoolean("suspended"));
+entity_record.setRemarks(rs.getString("remarks")); 
 entity_record.setPrice(rs.getBigDecimal("price"));
-entity_record.setDiscountPct(rs.getBigDecimal("discount_pct"));
+entity_record.setDiscount(rs.getBigDecimal("discount"));
 entity_record.setFinalPrice(rs.getBigDecimal("final_price"));
-entity_record.setPaid(rs.getBigDecimal("paid"));
+entity_record.setPaidAmount(rs.getBigDecimal("paid_amount"));
+entity_record.setFullPaid(rs.getBoolean("full_paid"));
+entity_record.setBonusPeriod(rs.getBigDecimal("bonus_period"));
         listOfRecords.add(entity_record);
  }
    }catch(Exception e){logger.error("Error", e);}
@@ -202,15 +228,21 @@ entity_record.setUpdateBy(rs.getString("update_by"));
 entity_record.setDeletedAt(rs.getLong("deleted_at"));
 entity_record.setDeletedBy(rs.getString("deleted_by")); 
 entity_record.setMemberId(rs.getString("member_id")); 
+entity_record.setType(rs.getString("type")); 
+entity_record.setMaxEntryCount(rs.getBigDecimal("max_entry_count"));
+entity_record.setConsumedEntryCount(rs.getBigDecimal("consumed_entry_count"));
 entity_record.setStartDate(rs.getDate("start_date"));
 entity_record.setEndDate(rs.getDate("end_date"));
-entity_record.setSubscriptionType(rs.getString("subscription_type")); 
-entity_record.setSubscriptionLevel(rs.getString("subscription_level")); 
-entity_record.setRemainingEntries(rs.getInt("remaining_entries"));
+entity_record.setFrozen(rs.getBoolean("frozen"));
+entity_record.setFrozenTill(rs.getDate("frozen_till"));
+entity_record.setSuspended(rs.getBoolean("suspended"));
+entity_record.setRemarks(rs.getString("remarks")); 
 entity_record.setPrice(rs.getBigDecimal("price"));
-entity_record.setDiscountPct(rs.getBigDecimal("discount_pct"));
+entity_record.setDiscount(rs.getBigDecimal("discount"));
 entity_record.setFinalPrice(rs.getBigDecimal("final_price"));
-entity_record.setPaid(rs.getBigDecimal("paid"));
+entity_record.setPaidAmount(rs.getBigDecimal("paid_amount"));
+entity_record.setFullPaid(rs.getBoolean("full_paid"));
+entity_record.setBonusPeriod(rs.getBigDecimal("bonus_period"));
         listOfRecords.add(entity_record);
  }
    }catch(Exception e){logger.error("Error", e); throw e;}

@@ -22,15 +22,21 @@ private String UpdateBy;
 private Long DeletedAt = new Long(0); 
 private String DeletedBy; 
 private String MemberId; 
+private String Type; 
+private BigDecimal MaxEntryCount = BigDecimal.ZERO; 
+private BigDecimal ConsumedEntryCount = BigDecimal.ZERO; 
 private Date StartDate; 
 private Date EndDate; 
-private String SubscriptionType; 
-private String SubscriptionLevel; 
-private Integer RemainingEntries = 0; 
+private boolean Frozen; 
+private Date FrozenTill; 
+private boolean Suspended; 
+private String Remarks; 
 private BigDecimal Price = BigDecimal.ZERO; 
-private BigDecimal DiscountPct = BigDecimal.ZERO; 
+private BigDecimal Discount = BigDecimal.ZERO; 
 private BigDecimal FinalPrice = BigDecimal.ZERO; 
-private BigDecimal Paid = BigDecimal.ZERO; 
+private BigDecimal PaidAmount = BigDecimal.ZERO; 
+private boolean FullPaid; 
+private BigDecimal BonusPeriod = BigDecimal.ZERO; 
 
     public SubscriptionBase() {
     }
@@ -132,6 +138,38 @@ return this.MemberId;}
 this.MemberId = MemberId;}
 
 
+ public String getType() {
+return this.Type;}
+
+
+
+
+  public void setType(String Type) {
+
+
+this.Type = Type;}
+
+
+ public BigDecimal getMaxEntryCount() {
+return this.MaxEntryCount;}
+
+
+  public void setMaxEntryCount(BigDecimal MaxEntryCount) {
+
+
+this.MaxEntryCount = MaxEntryCount;}
+
+
+ public BigDecimal getConsumedEntryCount() {
+return this.ConsumedEntryCount;}
+
+
+  public void setConsumedEntryCount(BigDecimal ConsumedEntryCount) {
+
+
+this.ConsumedEntryCount = ConsumedEntryCount;}
+
+
  public Date getStartDate() {
 return this.StartDate;}
 
@@ -156,40 +194,52 @@ return this.EndDate;}
 this.EndDate = EndDate;}
 
 
- public String getSubscriptionType() {
-return this.SubscriptionType;}
+ public boolean getFrozen() {
+return this.Frozen;}
 
 
 
 
-  public void setSubscriptionType(String SubscriptionType) {
+  public void setFrozen(boolean Frozen) {
 
 
-this.SubscriptionType = SubscriptionType;}
+this.Frozen = Frozen;}
 
 
- public String getSubscriptionLevel() {
-return this.SubscriptionLevel;}
-
-
-
-
-  public void setSubscriptionLevel(String SubscriptionLevel) {
-
-
-this.SubscriptionLevel = SubscriptionLevel;}
-
-
- public Integer getRemainingEntries() {
-return this.RemainingEntries;}
+ public Date getFrozenTill() {
+return this.FrozenTill;}
 
 
 
 
-  public void setRemainingEntries(Integer RemainingEntries) {
+  public void setFrozenTill(Date FrozenTill) {
 
 
-this.RemainingEntries = RemainingEntries;}
+this.FrozenTill = FrozenTill;}
+
+
+ public boolean getSuspended() {
+return this.Suspended;}
+
+
+
+
+  public void setSuspended(boolean Suspended) {
+
+
+this.Suspended = Suspended;}
+
+
+ public String getRemarks() {
+return this.Remarks;}
+
+
+
+
+  public void setRemarks(String Remarks) {
+
+
+this.Remarks = Remarks;}
 
 
  public BigDecimal getPrice() {
@@ -202,14 +252,14 @@ return this.Price;}
 this.Price = Price;}
 
 
- public BigDecimal getDiscountPct() {
-return this.DiscountPct;}
+ public BigDecimal getDiscount() {
+return this.Discount;}
 
 
-  public void setDiscountPct(BigDecimal DiscountPct) {
+  public void setDiscount(BigDecimal Discount) {
 
 
-this.DiscountPct = DiscountPct;}
+this.Discount = Discount;}
 
 
  public BigDecimal getFinalPrice() {
@@ -222,14 +272,36 @@ return this.FinalPrice;}
 this.FinalPrice = FinalPrice;}
 
 
- public BigDecimal getPaid() {
-return this.Paid;}
+ public BigDecimal getPaidAmount() {
+return this.PaidAmount;}
 
 
-  public void setPaid(BigDecimal Paid) {
+  public void setPaidAmount(BigDecimal PaidAmount) {
 
 
-this.Paid = Paid;}
+this.PaidAmount = PaidAmount;}
+
+
+ public boolean getFullPaid() {
+return this.FullPaid;}
+
+
+
+
+  public void setFullPaid(boolean FullPaid) {
+
+
+this.FullPaid = FullPaid;}
+
+
+ public BigDecimal getBonusPeriod() {
+return this.BonusPeriod;}
+
+
+  public void setBonusPeriod(BigDecimal BonusPeriod) {
+
+
+this.BonusPeriod = BonusPeriod;}
 
 
  

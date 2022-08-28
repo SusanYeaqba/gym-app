@@ -39,7 +39,7 @@ public class LoginBean extends ParentBean implements Serializable {
             loggedInUser = userDAO.login(username, password);
             if (loggedInUser != null) {
                 putValueToSession("loggedInUser", loggedInUser);
-                return "views/homepage.xhtml?faces-redirect=true";
+                return "views/dashboard.xhtml?faces-redirect=true";
             } else {
                 showErrorMessage("Incorrect credentials", "Email or Password is incorrect, please try again.");
                 return "";

@@ -38,10 +38,8 @@ entity_record.setDeletedBy(rs.getString("deleted_by"));
 entity_record.setUsername(rs.getString("username")); 
 entity_record.setPassword(rs.getString("password")); 
 entity_record.setRole(rs.getString("role")); 
-entity_record.setEmail(rs.getString("email")); 
 entity_record.setLastLogin(rs.getDate("last_login"));
-entity_record.setEnabled(rs.getBoolean("enabled"));
-entity_record.setFullName(rs.getString("full_name")); 
+entity_record.setActive(rs.getBoolean("active"));
         }
        }catch(Exception e){
         logger.error("Error", e); throw e;       }
@@ -59,7 +57,7 @@ catch(SQLException sqlex){logger.error("SQL Error", sqlex); throw sqlex;}       
 Connection con = null;
   PreparedStatement ps = null;
  try{ con = org.legion.util.MainDataSource.getConnection(); 
- ps = con.prepareStatement("INSERT INTO user_account VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+ ps = con.prepareStatement("INSERT INTO user_account VALUES(?,?,?,?,?,?,?,?,?,?,?,?)");
 ps.setString(1,record.getRowId()); 
 ps.setLong(2,record.getCreatedAt()); 
 ps.setString(3,record.getCreatedBy()); 
@@ -70,11 +68,9 @@ ps.setString(7,record.getDeletedBy());
 ps.setString(8,record.getUsername()); 
 ps.setString(9,record.getPassword()); 
 ps.setString(10,record.getRole()); 
-ps.setString(11,record.getEmail()); 
-if(record.getLastLogin() !=null){ps.setDate(12, new java.sql.Date(record.getLastLogin().getTime()));} 
- else{ps.setDate(12,new java.sql.Date(new java.util.Date().getTime()));}
-ps.setBoolean(13,record.getEnabled()); 
-ps.setString(14,record.getFullName()); 
+if(record.getLastLogin() !=null){ps.setDate(11, new java.sql.Date(record.getLastLogin().getTime()));} 
+ else{ps.setDate(11,new java.sql.Date(new java.util.Date().getTime()));}
+ps.setBoolean(12,record.getActive()); 
 
  int i = ps.executeUpdate();} catch(Exception e){logger.error("Error", e);}
         finally{ 
@@ -99,7 +95,7 @@ ps.setString(14,record.getFullName());
   public void updateRecord(UserAccount record) { Connection con = null;
  PreparedStatement ps = null;
  try { con = org.legion.util.MainDataSource.getConnection();
- ps = con.prepareStatement("UPDATE user_account SET row_id = ?, created_at = ?, created_by = ?, updated_at = ?, update_by = ?, deleted_at = ?, deleted_by = ?, username = ?, password = ?, role = ?, email = ?, last_login = ?, enabled = ?, full_name = ? WHERE row_id=? ");
+ ps = con.prepareStatement("UPDATE user_account SET row_id = ?, created_at = ?, created_by = ?, updated_at = ?, update_by = ?, deleted_at = ?, deleted_by = ?, username = ?, password = ?, role = ?, last_login = ?, active = ? WHERE row_id=? ");
 ps.setString(1,record.getRowId()); 
 ps.setLong(2,record.getCreatedAt()); 
 ps.setString(3,record.getCreatedBy()); 
@@ -110,12 +106,10 @@ ps.setString(7,record.getDeletedBy());
 ps.setString(8,record.getUsername()); 
 ps.setString(9,record.getPassword()); 
 ps.setString(10,record.getRole()); 
-ps.setString(11,record.getEmail()); 
-if (record.getLastLogin() != null) {ps.setDate(12,new java.sql.Date(record.getLastLogin().getTime()));}
-else{ps.setDate(12,new java.sql.Date(new java.util.Date().getTime()));} 
-ps.setBoolean(13,record.getEnabled()); 
-ps.setString(14,record.getFullName()); 
-ps.setString(15,record.getRowId()); 
+if (record.getLastLogin() != null) {ps.setDate(11,new java.sql.Date(record.getLastLogin().getTime()));}
+else{ps.setDate(11,new java.sql.Date(new java.util.Date().getTime()));} 
+ps.setBoolean(12,record.getActive()); 
+ps.setString(13,record.getRowId()); 
    int i = ps.executeUpdate();
  } catch(Exception e){
    logger.error("Error", e);}
@@ -152,10 +146,8 @@ entity_record.setDeletedBy(rs.getString("deleted_by"));
 entity_record.setUsername(rs.getString("username")); 
 entity_record.setPassword(rs.getString("password")); 
 entity_record.setRole(rs.getString("role")); 
-entity_record.setEmail(rs.getString("email")); 
 entity_record.setLastLogin(rs.getDate("last_login"));
-entity_record.setEnabled(rs.getBoolean("enabled"));
-entity_record.setFullName(rs.getString("full_name")); 
+entity_record.setActive(rs.getBoolean("active"));
         listOfRecords.add(entity_record);
  }
    }catch(Exception e){logger.error("Error", e);}
@@ -190,10 +182,8 @@ entity_record.setDeletedBy(rs.getString("deleted_by"));
 entity_record.setUsername(rs.getString("username")); 
 entity_record.setPassword(rs.getString("password")); 
 entity_record.setRole(rs.getString("role")); 
-entity_record.setEmail(rs.getString("email")); 
 entity_record.setLastLogin(rs.getDate("last_login"));
-entity_record.setEnabled(rs.getBoolean("enabled"));
-entity_record.setFullName(rs.getString("full_name")); 
+entity_record.setActive(rs.getBoolean("active"));
         listOfRecords.add(entity_record);
  }
    }catch(Exception e){logger.error("Error", e); throw e;}

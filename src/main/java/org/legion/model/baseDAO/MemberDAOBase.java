@@ -35,16 +35,18 @@ entity_record.setUpdatedAt(rs.getLong("updated_at"));
 entity_record.setUpdateBy(rs.getString("update_by")); 
 entity_record.setDeletedAt(rs.getLong("deleted_at"));
 entity_record.setDeletedBy(rs.getString("deleted_by")); 
+entity_record.setType(rs.getString("type")); 
 entity_record.setFullName(rs.getString("full_name")); 
-entity_record.setMobileNumber(rs.getString("mobile_number")); 
+entity_record.setGender(rs.getString("gender")); 
 entity_record.setEmail(rs.getString("email")); 
-entity_record.setJoinDate(rs.getDate("join_date"));
-entity_record.setLastEntry(rs.getLong("last_entry"));
-entity_record.setActiveSubscription(rs.getBoolean("active_subscription"));
-entity_record.setHasMedicalProblems(rs.getBoolean("has_medical_problems"));
-entity_record.setMedicalProblems(rs.getString("medical_problems")); 
-entity_record.setSubscriptionLevel(rs.getString("subscription_level")); 
-entity_record.setMemberNumber(rs.getString("member_number")); 
+entity_record.setBirthDate(rs.getDate("birth_date"));
+entity_record.setMobilePrefix(rs.getString("mobile_prefix")); 
+entity_record.setMobileNumber(rs.getString("mobile_number")); 
+entity_record.setBloodType(rs.getString("blood_type")); 
+entity_record.setHealthProblems(rs.getString("health_problems")); 
+entity_record.setMedications(rs.getString("medications")); 
+entity_record.setUserId(rs.getString("user_id")); 
+entity_record.setVip(rs.getBoolean("vip"));
         }
        }catch(Exception e){
         logger.error("Error", e); throw e;       }
@@ -62,7 +64,7 @@ catch(SQLException sqlex){logger.error("SQL Error", sqlex); throw sqlex;}       
 Connection con = null;
   PreparedStatement ps = null;
  try{ con = org.legion.util.MainDataSource.getConnection(); 
- ps = con.prepareStatement("INSERT INTO member VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+ ps = con.prepareStatement("INSERT INTO member VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 ps.setString(1,record.getRowId()); 
 ps.setLong(2,record.getCreatedAt()); 
 ps.setString(3,record.getCreatedBy()); 
@@ -70,17 +72,19 @@ ps.setLong(4,record.getUpdatedAt());
 ps.setString(5,record.getUpdateBy()); 
 ps.setLong(6,record.getDeletedAt()); 
 ps.setString(7,record.getDeletedBy()); 
-ps.setString(8,record.getFullName()); 
-ps.setString(9,record.getMobileNumber()); 
-ps.setString(10,record.getEmail()); 
-if(record.getJoinDate() !=null){ps.setDate(11, new java.sql.Date(record.getJoinDate().getTime()));} 
- else{ps.setDate(11,new java.sql.Date(new java.util.Date().getTime()));}
-ps.setLong(12,record.getLastEntry()); 
-ps.setBoolean(13,record.getActiveSubscription()); 
-ps.setBoolean(14,record.getHasMedicalProblems()); 
-ps.setString(15,record.getMedicalProblems()); 
-ps.setString(16,record.getSubscriptionLevel()); 
-ps.setString(17,record.getMemberNumber()); 
+ps.setString(8,record.getType()); 
+ps.setString(9,record.getFullName()); 
+ps.setString(10,record.getGender()); 
+ps.setString(11,record.getEmail()); 
+if(record.getBirthDate() !=null){ps.setDate(12, new java.sql.Date(record.getBirthDate().getTime()));} 
+ else{ps.setDate(12,new java.sql.Date(new java.util.Date().getTime()));}
+ps.setString(13,record.getMobilePrefix()); 
+ps.setString(14,record.getMobileNumber()); 
+ps.setString(15,record.getBloodType()); 
+ps.setString(16,record.getHealthProblems()); 
+ps.setString(17,record.getMedications()); 
+ps.setString(18,record.getUserId()); 
+ps.setBoolean(19,record.getVip()); 
 
  int i = ps.executeUpdate();} catch(Exception e){logger.error("Error", e);}
         finally{ 
@@ -105,7 +109,7 @@ ps.setString(17,record.getMemberNumber());
   public void updateRecord(Member record) { Connection con = null;
  PreparedStatement ps = null;
  try { con = org.legion.util.MainDataSource.getConnection();
- ps = con.prepareStatement("UPDATE member SET row_id = ?, created_at = ?, created_by = ?, updated_at = ?, update_by = ?, deleted_at = ?, deleted_by = ?, full_name = ?, mobile_number = ?, email = ?, join_date = ?, last_entry = ?, active_subscription = ?, has_medical_problems = ?, medical_problems = ?, subscription_level = ?, member_number = ? WHERE row_id=? ");
+ ps = con.prepareStatement("UPDATE member SET row_id = ?, created_at = ?, created_by = ?, updated_at = ?, update_by = ?, deleted_at = ?, deleted_by = ?, type = ?, full_name = ?, gender = ?, email = ?, birth_date = ?, mobile_prefix = ?, mobile_number = ?, blood_type = ?, health_problems = ?, medications = ?, user_id = ?, vip = ? WHERE row_id=? ");
 ps.setString(1,record.getRowId()); 
 ps.setLong(2,record.getCreatedAt()); 
 ps.setString(3,record.getCreatedBy()); 
@@ -113,18 +117,20 @@ ps.setLong(4,record.getUpdatedAt());
 ps.setString(5,record.getUpdateBy()); 
 ps.setLong(6,record.getDeletedAt()); 
 ps.setString(7,record.getDeletedBy()); 
-ps.setString(8,record.getFullName()); 
-ps.setString(9,record.getMobileNumber()); 
-ps.setString(10,record.getEmail()); 
-if (record.getJoinDate() != null) {ps.setDate(11,new java.sql.Date(record.getJoinDate().getTime()));}
-else{ps.setDate(11,new java.sql.Date(new java.util.Date().getTime()));} 
-ps.setLong(12,record.getLastEntry()); 
-ps.setBoolean(13,record.getActiveSubscription()); 
-ps.setBoolean(14,record.getHasMedicalProblems()); 
-ps.setString(15,record.getMedicalProblems()); 
-ps.setString(16,record.getSubscriptionLevel()); 
-ps.setString(17,record.getMemberNumber()); 
-ps.setString(18,record.getRowId()); 
+ps.setString(8,record.getType()); 
+ps.setString(9,record.getFullName()); 
+ps.setString(10,record.getGender()); 
+ps.setString(11,record.getEmail()); 
+if (record.getBirthDate() != null) {ps.setDate(12,new java.sql.Date(record.getBirthDate().getTime()));}
+else{ps.setDate(12,new java.sql.Date(new java.util.Date().getTime()));} 
+ps.setString(13,record.getMobilePrefix()); 
+ps.setString(14,record.getMobileNumber()); 
+ps.setString(15,record.getBloodType()); 
+ps.setString(16,record.getHealthProblems()); 
+ps.setString(17,record.getMedications()); 
+ps.setString(18,record.getUserId()); 
+ps.setBoolean(19,record.getVip()); 
+ps.setString(20,record.getRowId()); 
    int i = ps.executeUpdate();
  } catch(Exception e){
    logger.error("Error", e);}
@@ -158,16 +164,18 @@ entity_record.setUpdatedAt(rs.getLong("updated_at"));
 entity_record.setUpdateBy(rs.getString("update_by")); 
 entity_record.setDeletedAt(rs.getLong("deleted_at"));
 entity_record.setDeletedBy(rs.getString("deleted_by")); 
+entity_record.setType(rs.getString("type")); 
 entity_record.setFullName(rs.getString("full_name")); 
-entity_record.setMobileNumber(rs.getString("mobile_number")); 
+entity_record.setGender(rs.getString("gender")); 
 entity_record.setEmail(rs.getString("email")); 
-entity_record.setJoinDate(rs.getDate("join_date"));
-entity_record.setLastEntry(rs.getLong("last_entry"));
-entity_record.setActiveSubscription(rs.getBoolean("active_subscription"));
-entity_record.setHasMedicalProblems(rs.getBoolean("has_medical_problems"));
-entity_record.setMedicalProblems(rs.getString("medical_problems")); 
-entity_record.setSubscriptionLevel(rs.getString("subscription_level")); 
-entity_record.setMemberNumber(rs.getString("member_number")); 
+entity_record.setBirthDate(rs.getDate("birth_date"));
+entity_record.setMobilePrefix(rs.getString("mobile_prefix")); 
+entity_record.setMobileNumber(rs.getString("mobile_number")); 
+entity_record.setBloodType(rs.getString("blood_type")); 
+entity_record.setHealthProblems(rs.getString("health_problems")); 
+entity_record.setMedications(rs.getString("medications")); 
+entity_record.setUserId(rs.getString("user_id")); 
+entity_record.setVip(rs.getBoolean("vip"));
         listOfRecords.add(entity_record);
  }
    }catch(Exception e){logger.error("Error", e);}
@@ -199,16 +207,18 @@ entity_record.setUpdatedAt(rs.getLong("updated_at"));
 entity_record.setUpdateBy(rs.getString("update_by")); 
 entity_record.setDeletedAt(rs.getLong("deleted_at"));
 entity_record.setDeletedBy(rs.getString("deleted_by")); 
+entity_record.setType(rs.getString("type")); 
 entity_record.setFullName(rs.getString("full_name")); 
-entity_record.setMobileNumber(rs.getString("mobile_number")); 
+entity_record.setGender(rs.getString("gender")); 
 entity_record.setEmail(rs.getString("email")); 
-entity_record.setJoinDate(rs.getDate("join_date"));
-entity_record.setLastEntry(rs.getLong("last_entry"));
-entity_record.setActiveSubscription(rs.getBoolean("active_subscription"));
-entity_record.setHasMedicalProblems(rs.getBoolean("has_medical_problems"));
-entity_record.setMedicalProblems(rs.getString("medical_problems")); 
-entity_record.setSubscriptionLevel(rs.getString("subscription_level")); 
-entity_record.setMemberNumber(rs.getString("member_number")); 
+entity_record.setBirthDate(rs.getDate("birth_date"));
+entity_record.setMobilePrefix(rs.getString("mobile_prefix")); 
+entity_record.setMobileNumber(rs.getString("mobile_number")); 
+entity_record.setBloodType(rs.getString("blood_type")); 
+entity_record.setHealthProblems(rs.getString("health_problems")); 
+entity_record.setMedications(rs.getString("medications")); 
+entity_record.setUserId(rs.getString("user_id")); 
+entity_record.setVip(rs.getBoolean("vip"));
         listOfRecords.add(entity_record);
  }
    }catch(Exception e){logger.error("Error", e); throw e;}

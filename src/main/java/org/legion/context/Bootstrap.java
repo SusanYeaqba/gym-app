@@ -16,16 +16,6 @@ public class Bootstrap implements ServletContextListener {
     public void contextInitialized(ServletContextEvent sce) {
         try {
             log.info("<<<<<< initializing system context >>>>>>");
-
-            String env = System.getenv("GYM_APP_ENV");
-            log.info("RUNNING ENVIRONMENT: " + env);
-
-            if (env == null || env.equals("null")) {
-                throw new Exception("GYM_APP_ENV environment variable not defined, should be ['DEVELOPMENT','PRODUCTION']");
-            } else if (env.equals("PRODUCTION")) {
-            }
-
-
         } catch (Exception e) {
             log.error("Error during system context bootstrap", e);
         }

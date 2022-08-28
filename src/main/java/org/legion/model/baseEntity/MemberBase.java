@@ -21,16 +21,18 @@ private Long UpdatedAt = new Long(0);
 private String UpdateBy; 
 private Long DeletedAt = new Long(0); 
 private String DeletedBy; 
+private String Type; 
 private String FullName; 
-private String MobileNumber; 
+private String Gender; 
 private String Email; 
-private Date JoinDate; 
-private Long LastEntry = new Long(0); 
-private boolean ActiveSubscription; 
-private boolean HasMedicalProblems; 
-private String MedicalProblems; 
-private String SubscriptionLevel; 
-private String MemberNumber; 
+private Date BirthDate; 
+private String MobilePrefix; 
+private String MobileNumber; 
+private String BloodType; 
+private String HealthProblems; 
+private String Medications; 
+private String UserId; 
+private boolean Vip; 
 
     public MemberBase() {
     }
@@ -120,6 +122,18 @@ return this.DeletedBy;}
 this.DeletedBy = DeletedBy;}
 
 
+ public String getType() {
+return this.Type;}
+
+
+
+
+  public void setType(String Type) {
+
+
+this.Type = Type;}
+
+
  public String getFullName() {
 return this.FullName;}
 
@@ -132,16 +146,16 @@ return this.FullName;}
 this.FullName = FullName;}
 
 
- public String getMobileNumber() {
-return this.MobileNumber;}
+ public String getGender() {
+return this.Gender;}
 
 
 
 
-  public void setMobileNumber(String MobileNumber) {
+  public void setGender(String Gender) {
 
 
-this.MobileNumber = MobileNumber;}
+this.Gender = Gender;}
 
 
  public String getEmail() {
@@ -156,88 +170,100 @@ return this.Email;}
 this.Email = Email;}
 
 
- public Date getJoinDate() {
-return this.JoinDate;}
+ public Date getBirthDate() {
+return this.BirthDate;}
 
 
 
 
-  public void setJoinDate(Date JoinDate) {
+  public void setBirthDate(Date BirthDate) {
 
 
-this.JoinDate = JoinDate;}
+this.BirthDate = BirthDate;}
 
 
- public Long getLastEntry() {
-return this.LastEntry;}
-
-
-
-
-  public void setLastEntry(Long LastEntry) {
-
-
-this.LastEntry = LastEntry;}
-
-
- public boolean getActiveSubscription() {
-return this.ActiveSubscription;}
+ public String getMobilePrefix() {
+return this.MobilePrefix;}
 
 
 
 
-  public void setActiveSubscription(boolean ActiveSubscription) {
+  public void setMobilePrefix(String MobilePrefix) {
 
 
-this.ActiveSubscription = ActiveSubscription;}
+this.MobilePrefix = MobilePrefix;}
 
 
- public boolean getHasMedicalProblems() {
-return this.HasMedicalProblems;}
-
-
-
-
-  public void setHasMedicalProblems(boolean HasMedicalProblems) {
-
-
-this.HasMedicalProblems = HasMedicalProblems;}
-
-
- public String getMedicalProblems() {
-return this.MedicalProblems;}
+ public String getMobileNumber() {
+return this.MobileNumber;}
 
 
 
 
-  public void setMedicalProblems(String MedicalProblems) {
+  public void setMobileNumber(String MobileNumber) {
 
 
-this.MedicalProblems = MedicalProblems;}
+this.MobileNumber = MobileNumber;}
 
 
- public String getSubscriptionLevel() {
-return this.SubscriptionLevel;}
-
-
-
-
-  public void setSubscriptionLevel(String SubscriptionLevel) {
-
-
-this.SubscriptionLevel = SubscriptionLevel;}
-
-
- public String getMemberNumber() {
-return this.MemberNumber;}
+ public String getBloodType() {
+return this.BloodType;}
 
 
 
 
-  public void setMemberNumber(String MemberNumber) {
+  public void setBloodType(String BloodType) {
 
 
-this.MemberNumber = MemberNumber;}
+this.BloodType = BloodType;}
+
+
+ public String getHealthProblems() {
+return this.HealthProblems;}
+
+
+
+
+  public void setHealthProblems(String HealthProblems) {
+
+
+this.HealthProblems = HealthProblems;}
+
+
+ public String getMedications() {
+return this.Medications;}
+
+
+
+
+  public void setMedications(String Medications) {
+
+
+this.Medications = Medications;}
+
+
+ public String getUserId() {
+return this.UserId;}
+
+
+
+
+  public void setUserId(String UserId) {
+
+
+this.UserId = UserId;}
+
+
+ public boolean getVip() {
+return this.Vip;}
+
+
+
+
+  public void setVip(boolean Vip) {
+
+
+this.Vip = Vip;}
 
 
  

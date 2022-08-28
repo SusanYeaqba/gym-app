@@ -48,7 +48,7 @@ public class Generator {
                 objectNames.add(ObjectName);
 
             }
-            File projectFolder = new File("C:\\Users\\MohammadNairat\\IdeaProjects\\gym-app\\src\\main\\java\\org\\legion\\model");
+            File projectFolder = new File("D:\\Work\\Legion\\gym-app\\src\\main\\java\\org\\legion\\model");
             if (!projectFolder.isDirectory()) {
                 projectFolder.mkdir();
             }
