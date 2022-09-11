@@ -6,7 +6,7 @@
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
                 template="/WEB-INF/template.xhtml">
 
-    <ui:define name="title">Gymmi - Users &amp; Roles Setup</ui:define>
+    <ui:define name="title">Ultra Gym - User Accounts</ui:define>
     <ui:define name="content">
         <div class="p-grid">
             <div class="p-col">
@@ -25,25 +25,12 @@
                                                  update=":user-form"
                                                  disabled="#{empty usersBean.currentUser.rowId}"
                                                  oncomplete="PF('user-form').show()"/>
-                                <p:commandButton id="deleteBtn" value="Delete" icon="pi pi-pencil"
-                                                 styleClass="danger-button p-mr-2"
-                                                 update="@form" disabled="#{empty usersBean.currentUser.rowId}"
-                                                 actionListener="#{usersBean.deleteUser}">
-                                    <p:confirm header="Confirmation" message="Do you want to delete this record?"
-                                               icon="pi pi-exclamation-triangle"/>
-                                </p:commandButton>
-                                <p:commandButton icon="pi pi-user" value="Access Roles"
-                                                 styleClass="p-mr-2"
-                                                 disabled="#{empty usersBean.currentUser.rowId}"
-                                                 oncomplete="PF('access-roles').show()"/>
                             </f:facet>
                             <p:ajax event="rowSelect" update=":users @(.ui-button)"/>
-                            <p:column headerText="Full Name" width="15%" field="fullName" filterMatchMode="contains"/>
                             <p:column headerText="Username" width="15%" field="username" filterMatchMode="contains"/>
-                            <p:column headerText="Email" width="15%" field="email" filterMatchMode="contains"/>
                             <p:column headerText="Role" width="15%" field="role" filterMatchMode="contains"/>
                             <p:column headerText="Last Login" width="15%" field="lastLogin" filterMatchMode="contains"/>
-                            <p:column headerText="Enabled" width="7%" field="enabled" filterMatchMode="contains"/>
+                            <p:column headerText="Enabled" width="7%" field="active" filterMatchMode="contains"/>
                         </p:dataTable>
                     </h:form>
                 </div>
@@ -53,37 +40,36 @@
         <!-- New/Edit User Dialog-->
         <h:form prependId="false">
             <p:dialog header="New/Edit User" widgetVar="user-form" responsive="true" modal="true" blockScroll="true">
+                <p:messages>
+                    <p:autoUpdate/>
+                </p:messages>
                 <p:separator/>
                 <p:scrollPanel id="user-form" style="height: 400px;width: 100%">
                     <p:autoUpdate/>
-                    <p:panelGrid layout="flex" columns="4" style="width: inherit!important;">
-                        <p:outputLabel for="@next" value="Full Name"/>
-                        <p:inputText value="#{usersBean.currentUser.fullName}" required="true" styleClass="my-input"/>
 
+                    <p:panelGrid layout="flex" columns="2" style="width: inherit!important;">
                         <p:outputLabel for="@next" value="Username"/>
                         <p:inputText value="#{usersBean.currentUser.username}" required="true" styleClass="my-input"/>
-
-                        <p:outputLabel for="@next" value="Email"/>
-                        <p:inputText value="#{usersBean.currentUser.email}" required="true" styleClass="my-input"/>
 
                         <p:outputLabel for="@next" value="Role"/>
                         <p:selectOneMenu value="#{usersBean.currentUser.role}" styleClass="my-input">
                             <f:selectItem itemLabel="Admin" itemValue="Admin"/>
                             <f:selectItem itemLabel="Manager" itemValue="Manager"/>
-                            <f:selectItem itemLabel="Reception" itemValue="Reception"/>
+                            <f:selectItem itemLabel="Client" itemValue="Client"/>
+                            <f:selectItem itemLabel="Trainer" itemValue="Trainer"/>
                         </p:selectOneMenu>
 
                         <p:outputLabel for="@next" value="Enabled"/>
-                        <p:selectBooleanCheckbox value="#{usersBean.currentUser.enabled}"/>
+                        <p:selectBooleanCheckbox value="#{usersBean.currentUser.active}"/>
                     </p:panelGrid>
                     <p:separator/>
-                    <p:panelGrid layout="flex" columns="4" style="width: inherit!important;">
+                    <p:panelGrid layout="flex" columns="1" style="width: inherit!important;">
                         <p:outputLabel for="@next" value="Password"/>
                         <p:password id="pwd1" match="pwd2" value="#{usersBean.currentUser.password}" required="true"
                                     styleClass="my-input"/>
 
                         <p:outputLabel for="@next" value="Confirm Password"/>
-                        <p:password id="pwd2" value="#{usersBean.currentUser.password}" required="true"
+                        <p:password id="pwd2" match="pwd2" value="#{usersBean.currentUser.password}" required="true"
                                     styleClass="my-input"/>
                     </p:panelGrid>
                 </p:scrollPanel>

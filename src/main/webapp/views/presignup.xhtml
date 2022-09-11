@@ -1,0 +1,204 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">Ultra Gym - Members</ui:define>
+    <ui:define name="content">
+        <style>
+            body {
+                overflow: hidden;
+            }
+
+            input {
+                min-width: 100% !important;
+            }
+
+            .inactive {
+                opacity: 0.75 !important;
+                color: #ba0000 !important;
+                background-color: #e1e1e1 !important;
+            }
+        </style>
+        <div class="p-grid">
+            <div class="p-col">
+                <div class="card">
+                    <h4>Ultra Gym - Members</h4>
+                    <h:form prependId="false">
+                        <p:dataTable id="data" value="#{preSignupBean.preSignupList}" var="psm"
+                                     scrollable="true" scrollRows="20" scrollHeight="450">
+                            <p:column field="fullName" filterMatchMode="contains"/>
+                            <p:column field="mobileNumber" filterMatchMode="contains"/>
+                            <p:column field="email" filterMatchMode="contains"/>
+                            <p:column width="5%" field="gender" filterMatchMode="contains"/>
+                            <p:column width="10%" field="subPeriod" filterMatchMode="contains"/>
+                            <p:column headerText="To Member Subscription">
+                                <p:commandButton icon="pi pi-file" update=":subform" value="Prepare Conversion"
+                                                 actionListener="#{preSignupBean.prepareSubscriptionConvert(psm)}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+
+        <p:sidebar style="width: 45%" position="right" widgetVar="subform">
+            <h:form id="subform" prependId="false">
+                <h:panelGrid cellspacing="5" columns="2">
+                    <p:commandButton value="Convert Pre-Signup To Active Member &amp; Subscription" icon="pi pi-save"
+                                     actionListener="#{preSignupBean.confirmSubscription}"
+                                     update="@form :data"
+                                     oncomplete="if(args &amp;&amp; !args.validationFailed) PF('subform').hide()"/>
+                    <p:commandButton value="Cancel" icon="pi pi-times" update="@form"
+                                     actionListener="#{preSignupBean.cancel}"
+                                     styleClass="danger-button" oncomplete="PF('subform').hide()"/>
+                </h:panelGrid>
+                <p:messages>
+                    <p:autoUpdate/>
+                </p:messages>
+                <div style="height: 85vh; overflow-y: scroll">
+                    <h3 style="padding: 5px; border-bottom: 1px solid #e1e1e1">Member Info</h3>
+                    <h:panelGrid cellspacing="5" columns="1" style="width: 100%">
+                        <p:outputLabel for="@next" value="Full Name"/>
+                        <p:inputText required="true" requiredMessage="Member full name is required"
+                                     placeholder="Member full name" value="#{preSignupBean.member.fullName}"/>
+
+                        <p:outputLabel for="@next" value="Type"/>
+                        <p:selectOneMenu style="width: 100%" value="#{preSignupBean.member.type}">
+                            <f:selectItem itemLabel="Client" itemValue="Client"/>
+                            <f:selectItem itemLabel="Trainer" itemValue="Trainer"/>
+                        </p:selectOneMenu>
+
+
+                        <p:outputLabel for="mobileNumber" value="Mobile Number"/>
+                        <h:panelGrid cellspacing="5" columns="2" style="width: 100%">
+                            <p:selectOneMenu style="width: 100%" value="#{preSignupBean.member.mobilePrefix}">
+                                <f:selectItem itemLabel="+970" itemValue="00970"/>
+                                <f:selectItem itemLabel="+972" itemValue="00972"/>
+                            </p:selectOneMenu>
+                            <p:inputText required="true" id="mobileNumber"
+                                         requiredMessage="Mobile number is required"
+                                         placeholder="Mobile number starting with 597... etc"
+                                         style="width: 100%!important;"
+                                         value="#{preSignupBean.member.mobileNumber}"/>
+                        </h:panelGrid>
+
+                        <p:outputLabel for="@next" value="Birthdate"/>
+                        <p:calendar navigator="true" required="true" requiredMessage="Birthdate is required"
+                                    pattern="yyyy-MM-dd"
+                                    placeholder="Date of birth (YYYY-MM-DD)"
+                                    value="#{preSignupBean.member.birthDate}"/>
+
+
+                        <p:outputLabel for="@next" value="Gender"/>
+                        <p:selectOneMenu style="width: 100%" value="#{preSignupBean.member.gender}">
+                            <f:selectItem itemLabel="Male" itemValue="M"/>
+                            <f:selectItem itemLabel="Female" itemValue="F"/>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel for="@next" value="Email"/>
+                        <p:inputText value="#{preSignupBean.member.email}" placeholder="Email (Optional)"/>
+
+
+                        <p:outputLabel for="@next" value="Blood Type"/>
+                        <p:selectOneMenu style="width: 100%" value="#{preSignupBean.member.bloodType}">
+                            <f:selectItem itemLabel="A+" itemValue="A+"/>
+                            <f:selectItem itemLabel="A-" itemValue="A-"/>
+                            <f:selectItem itemLabel="B+" itemValue="B+"/>
+                            <f:selectItem itemLabel="B-" itemValue="B-"/>
+                            <f:selectItem itemLabel="O+" itemValue="O+"/>
+                            <f:selectItem itemLabel="O-" itemValue="O-"/>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel for="@next" value="Medical/Health Issues"/>
+                        <p:inputTextarea rows="5" autoResize="true" style="width: 100%"
+                                         placeholder="If member has any current or chronic illness or health problem, please describe here"
+                                         maxlength="4000" value="#{preSignupBean.member.healthProblems}"/>
+
+                        <p:outputLabel for="@next" value="Undergoing Medications"/>
+                        <p:inputTextarea rows="5" autoResize="true" style="width: 100%"
+                                         placeholder="If member is currently under any medication or undergoing any treatment, please describe here"
+                                         maxlength="4000" value="#{preSignupBean.member.medications}"/>
+
+                        <h:panelGrid columns="4" cellspacing="5">
+                            <p:outputLabel value="VIP"/>
+                            <p:selectBooleanCheckbox value="#{preSignupBean.member.vip}"/>
+
+                            <p:outputLabel value="Active"/>
+                            <p:selectBooleanCheckbox value="#{preSignupBean.member.active}"/>
+                        </h:panelGrid>
+
+                    </h:panelGrid>
+                    <h3 style="padding: 5px; border-bottom: 1px solid #e1e1e1">Subscription Details</h3>
+                    <h:panelGrid id="subscriptionDetails" cellspacing="5" columns="1" style="width: 100%">
+                        <p:outputLabel for="@next" value="Subscription Model"/>
+                        <p:selectOneMenu style="width: 100%" value="#{preSignupBean.subscription.type}">
+                            <p:ajax update="subscriptionDetails"
+                                    listener="#{preSignupBean.subscription.updateMaximumEntries}"/>
+                            <f:selectItem itemLabel="1 Month" itemValue="1M"/>
+                            <f:selectItem itemLabel="3 Months" itemValue="3M"/>
+                            <f:selectItem itemLabel="6 Months" itemValue="6M"/>
+                            <f:selectItem itemLabel="1 Year" itemValue="1Y"/>
+                            <f:selectItem itemLabel="10 Entries" itemValue="10E"/>
+                            <f:selectItem itemLabel="20 Entries" itemValue="20E"/>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel for="@next" value="Start Date"/>
+                        <p:calendar navigator="true" required="true" requiredMessage="Start Date is required"
+                                    pattern="yyyy-MM-dd" style="width: 100%" inputStyle="width: 100%"
+                                    value="#{preSignupBean.subscription.startDate}">
+                            <p:ajax update="endDate"/>
+                        </p:calendar>
+
+                        <p:outputLabel for="@next" value="Bonus #{preSignupBean.subscription.type.contains('E') ? 'Entries' : 'Months'}"/>
+                        <p:inputNumber id="bonusPeriod" required="true" decimalPlaces="0"
+                                       style="width: 100%" inputStyle="width: 100%"
+                                       value="#{preSignupBean.subscription.bonusPeriod}">
+                            <p:ajax event="keyup" update="endDate"
+                                    listener="#{preSignupBean.subscription.updateMaximumEntries}"/>
+                        </p:inputNumber>
+
+                        <p:outputLabel for="@next" value="End Date"/>
+                        <p:calendar id="endDate" navigator="true" required="true"
+                                    requiredMessage="Start Date is required" readonly="true"
+                                    style="width: 100%" inputStyle="width: 100%"
+                                    pattern="yyyy-MM-dd" value="#{preSignupBean.subscription.endDate}">
+                            <p:ajax/>
+                        </p:calendar>
+
+                        <p:outputLabel for="@next" value="Price"/>
+                        <p:inputNumber id="price" required="true" requiredMessage="Price is required"
+                                       decimalPlaces="2"
+                                       style="width: 100%" inputStyle="width: 100%"
+                                       value="#{preSignupBean.subscription.price}">
+                            <p:ajax event="keyup" update="finalPrice"
+                                    listener="#{preSignupBean.subscription.calculateDiscount}"/>
+                        </p:inputNumber>
+
+                        <p:outputLabel for="@next" value="Discount %"/>
+                        <p:inputNumber id="discount" required="true" decimalPlaces="2" symbol="%"
+                                       style="width: 100%" inputStyle="width: 100%"
+                                       value="#{preSignupBean.subscription.discount}">
+                            <p:ajax event="keyup" update="finalPrice"
+                                    listener="#{preSignupBean.subscription.calculateDiscount}"/>
+                        </p:inputNumber>
+
+                        <p:outputLabel for="@next" value="Final Price"/>
+                        <p:inputNumber id="finalPrice" readonly="true" decimalPlaces="2"
+                                       style="width: 100%" inputStyle="width: 100%"
+                                       value="#{preSignupBean.subscription.finalPrice}"/>
+
+                        <p:outputLabel for="@next" value="Remarks"/>
+                        <p:inputTextarea rows="5" autoResize="true" style="width: 100%"
+                                         placeholder="Notes on subscription"
+                                         maxlength="4000" value="#{preSignupBean.subscription.remarks}"/>
+
+                    </h:panelGrid>
+                </div>
+            </h:form>
+        </p:sidebar>
+    </ui:define>
+
+</ui:composition>

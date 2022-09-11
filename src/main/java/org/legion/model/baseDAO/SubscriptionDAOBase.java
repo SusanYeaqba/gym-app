@@ -51,6 +51,7 @@ entity_record.setFinalPrice(rs.getBigDecimal("final_price"));
 entity_record.setPaidAmount(rs.getBigDecimal("paid_amount"));
 entity_record.setFullPaid(rs.getBoolean("full_paid"));
 entity_record.setBonusPeriod(rs.getBigDecimal("bonus_period"));
+entity_record.setActive(rs.getBoolean("active"));
         }
        }catch(Exception e){
         logger.error("Error", e); throw e;       }
@@ -68,7 +69,7 @@ catch(SQLException sqlex){logger.error("SQL Error", sqlex); throw sqlex;}       
 Connection con = null;
   PreparedStatement ps = null;
  try{ con = org.legion.util.MainDataSource.getConnection(); 
- ps = con.prepareStatement("INSERT INTO subscription VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+ ps = con.prepareStatement("INSERT INTO subscription VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 ps.setString(1,record.getRowId()); 
 ps.setLong(2,record.getCreatedAt()); 
 ps.setString(3,record.getCreatedBy()); 
@@ -95,6 +96,7 @@ ps.setBigDecimal(20,record.getFinalPrice());
 ps.setBigDecimal(21,record.getPaidAmount()); 
 ps.setBoolean(22,record.getFullPaid()); 
 ps.setBigDecimal(23,record.getBonusPeriod()); 
+ps.setBoolean(24,record.getActive()); 
 
  int i = ps.executeUpdate();} catch(Exception e){logger.error("Error", e);}
         finally{ 
@@ -119,7 +121,7 @@ ps.setBigDecimal(23,record.getBonusPeriod());
   public void updateRecord(Subscription record) { Connection con = null;
  PreparedStatement ps = null;
  try { con = org.legion.util.MainDataSource.getConnection();
- ps = con.prepareStatement("UPDATE subscription SET row_id = ?, created_at = ?, created_by = ?, updated_at = ?, update_by = ?, deleted_at = ?, deleted_by = ?, member_id = ?, type = ?, max_entry_count = ?, consumed_entry_count = ?, start_date = ?, end_date = ?, frozen = ?, frozen_till = ?, suspended = ?, remarks = ?, price = ?, discount = ?, final_price = ?, paid_amount = ?, full_paid = ?, bonus_period = ? WHERE row_id=? ");
+ ps = con.prepareStatement("UPDATE subscription SET row_id = ?, created_at = ?, created_by = ?, updated_at = ?, update_by = ?, deleted_at = ?, deleted_by = ?, member_id = ?, type = ?, max_entry_count = ?, consumed_entry_count = ?, start_date = ?, end_date = ?, frozen = ?, frozen_till = ?, suspended = ?, remarks = ?, price = ?, discount = ?, final_price = ?, paid_amount = ?, full_paid = ?, bonus_period = ?, active = ? WHERE row_id=? ");
 ps.setString(1,record.getRowId()); 
 ps.setLong(2,record.getCreatedAt()); 
 ps.setString(3,record.getCreatedBy()); 
@@ -146,7 +148,8 @@ ps.setBigDecimal(20,record.getFinalPrice());
 ps.setBigDecimal(21,record.getPaidAmount()); 
 ps.setBoolean(22,record.getFullPaid()); 
 ps.setBigDecimal(23,record.getBonusPeriod()); 
-ps.setString(24,record.getRowId()); 
+ps.setBoolean(24,record.getActive()); 
+ps.setString(25,record.getRowId()); 
    int i = ps.executeUpdate();
  } catch(Exception e){
    logger.error("Error", e);}
@@ -196,6 +199,7 @@ entity_record.setFinalPrice(rs.getBigDecimal("final_price"));
 entity_record.setPaidAmount(rs.getBigDecimal("paid_amount"));
 entity_record.setFullPaid(rs.getBoolean("full_paid"));
 entity_record.setBonusPeriod(rs.getBigDecimal("bonus_period"));
+entity_record.setActive(rs.getBoolean("active"));
         listOfRecords.add(entity_record);
  }
    }catch(Exception e){logger.error("Error", e);}
@@ -243,6 +247,7 @@ entity_record.setFinalPrice(rs.getBigDecimal("final_price"));
 entity_record.setPaidAmount(rs.getBigDecimal("paid_amount"));
 entity_record.setFullPaid(rs.getBoolean("full_paid"));
 entity_record.setBonusPeriod(rs.getBigDecimal("bonus_period"));
+entity_record.setActive(rs.getBoolean("active"));
         listOfRecords.add(entity_record);
  }
    }catch(Exception e){logger.error("Error", e); throw e;}

@@ -148,6 +148,7 @@ public class ParentBean implements Serializable {
     public void showErrorMessage(String title) {
         FacesMessage fm = new FacesMessage(FacesMessage.SEVERITY_ERROR, title, "");
         FacesContext.getCurrentInstance().addMessage("mainNotificationFor", fm);
+        hideLoading();
     }
 
     public void showFatalMessage(Exception exception) {

@@ -12,9 +12,13 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
         <meta name="apple-mobile-web-app-capable" content="yes"/>
     </f:facet>
-    <title>Gymmi - Login</title>
+    <title>Ultra Gym - Login</title>
     <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
     <style>
+        body{
+            background: rgb(255,255,255) !important;
+            background: linear-gradient(0deg, rgba(255,255,255,1) 0%, #2d2d2d 0%, rgba(255,255,255,1) 65%) !important;;
+        }
         .login-body .login-wrapper .login-panel > button > span {
             padding: 0px !important;
         }
@@ -33,13 +37,11 @@
 <h:body styleClass="login-body">
     <h:form>
         <div class="login-wrapper">
-            <div class="login-panel">
+            <div class="login-panel" style="bottom: 100px;position:relative;">
                 <p:growl>
                     <p:autoUpdate/>
                 </p:growl>
-                <p:commandLink styleClass="logo">
-                    <p:graphicImage name="images/ug-logo.png"/>
-                </p:commandLink>
+                    <p:graphicImage width="500" name="images/ug-logo.png"/>
                 <p:inputText id="email" placeholder="Username" value="#{loginBean.username}"
                              required="true" requiredMessage="Please fill out your email"/>
                 <p:password id="password" placeholder="Password" value="#{loginBean.password}"
@@ -48,6 +50,8 @@
             </div>
         </div>
     </h:form>
+
+    <img src="resources/images/powered.png" width="500" style="position:fixed; left: 2%; bottom: 2%" />
     <h:outputStylesheet name="css/primeicons.css" library="freya-layout"/>
     <h:outputStylesheet name="css/#{guestPreferences.layout}.css" library="freya-layout"/>
 </h:body>

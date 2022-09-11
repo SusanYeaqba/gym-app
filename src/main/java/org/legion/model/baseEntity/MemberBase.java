@@ -33,6 +33,9 @@ private String HealthProblems;
 private String Medications; 
 private String UserId; 
 private boolean Vip; 
+private boolean Active; 
+private Integer Age = 0; 
+private String MemberNumber; 
 
     public MemberBase() {
     }
@@ -264,6 +267,42 @@ return this.Vip;}
 
 
 this.Vip = Vip;}
+
+
+ public boolean getActive() {
+return this.Active;}
+
+
+
+
+  public void setActive(boolean Active) {
+
+
+this.Active = Active;}
+
+
+ public Integer getAge() {
+return this.Age;}
+
+
+
+
+  public void setAge(Integer Age) {
+
+
+this.Age = Age;}
+
+
+ public String getMemberNumber() {
+return this.MemberNumber;}
+
+
+
+
+  public void setMemberNumber(String MemberNumber) {
+
+
+this.MemberNumber = MemberNumber;}
 
 
  

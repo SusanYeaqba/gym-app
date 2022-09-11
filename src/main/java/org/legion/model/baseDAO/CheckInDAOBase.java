@@ -1,6 +1,6 @@
 package org.legion.model.baseDAO;
 
-import org.legion.model.entity.Member;
+import org.legion.model.entity.CheckIn;
 import java.sql.Connection;
 import java.sql.Date;
 import org.slf4j.Logger;
@@ -14,20 +14,20 @@ import java.math.*;
 import org.legion.util.*;
 import java.util.List;
 import java.io.Serializable;
-public class MemberDAOBase implements Serializable{
-private static final Logger logger = LoggerFactory.getLogger(MemberDAOBase.class);
+public class CheckInDAOBase implements Serializable{
+private static final Logger logger = LoggerFactory.getLogger(CheckInDAOBase.class);
  //-----GET RECORD METHOD----------- 
- public Member getRecord(String rowID) throws Exception {
-Member entity_record  = null;
+ public CheckIn getRecord(String rowID) throws Exception {
+CheckIn entity_record  = null;
         Connection con =null;
           PreparedStatement stmt = null;
           ResultSet rs = null;
           try { con = org.legion.util.MainDataSource.getConnection();
-        String query = "select * from member where row_id = '" + rowID + "'";
+        String query = "select * from check_in where row_id = '" + rowID + "'";
         stmt = con.prepareStatement(query);
         rs = stmt.executeQuery();
         while (rs.next()) {
-entity_record = new Member();
+entity_record = new CheckIn();
 entity_record.setRowId(rs.getString("row_id")); 
 entity_record.setCreatedAt(rs.getLong("created_at"));
 entity_record.setCreatedBy(rs.getString("created_by")); 
@@ -35,21 +35,9 @@ entity_record.setUpdatedAt(rs.getLong("updated_at"));
 entity_record.setUpdateBy(rs.getString("update_by")); 
 entity_record.setDeletedAt(rs.getLong("deleted_at"));
 entity_record.setDeletedBy(rs.getString("deleted_by")); 
-entity_record.setType(rs.getString("type")); 
-entity_record.setFullName(rs.getString("full_name")); 
-entity_record.setGender(rs.getString("gender")); 
-entity_record.setEmail(rs.getString("email")); 
-entity_record.setBirthDate(rs.getDate("birth_date"));
-entity_record.setMobilePrefix(rs.getString("mobile_prefix")); 
-entity_record.setMobileNumber(rs.getString("mobile_number")); 
-entity_record.setBloodType(rs.getString("blood_type")); 
-entity_record.setHealthProblems(rs.getString("health_problems")); 
-entity_record.setMedications(rs.getString("medications")); 
-entity_record.setUserId(rs.getString("user_id")); 
-entity_record.setVip(rs.getBoolean("vip"));
-entity_record.setActive(rs.getBoolean("active"));
-entity_record.setAge(rs.getInt("age"));
-entity_record.setMemberNumber(rs.getString("member_number")); 
+entity_record.setMemberId(rs.getString("member_id")); 
+entity_record.setCheckIn(rs.getLong("check_in"));
+entity_record.setExpired(rs.getBoolean("expired"));
         }
        }catch(Exception e){
         logger.error("Error", e); throw e;       }
@@ -62,12 +50,12 @@ catch(SQLException sqlex){logger.error("SQL Error", sqlex); throw sqlex;}       
             return entity_record;
 }
 //-----------------INSERT METHOD ---------------
-  public void saveRecord(Member record)  { 
+  public void saveRecord(CheckIn record)  { 
  if(record.getRowId() != null && !record.getRowId().isEmpty()){updateRecord(record);return;}record.setRowId(new Utilities().generateRowID());
 Connection con = null;
   PreparedStatement ps = null;
  try{ con = org.legion.util.MainDataSource.getConnection(); 
- ps = con.prepareStatement("INSERT INTO member VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+ ps = con.prepareStatement("INSERT INTO check_in VALUES(?,?,?,?,?,?,?,?,?,?)");
 ps.setString(1,record.getRowId()); 
 ps.setLong(2,record.getCreatedAt()); 
 ps.setString(3,record.getCreatedBy()); 
@@ -75,22 +63,9 @@ ps.setLong(4,record.getUpdatedAt());
 ps.setString(5,record.getUpdateBy()); 
 ps.setLong(6,record.getDeletedAt()); 
 ps.setString(7,record.getDeletedBy()); 
-ps.setString(8,record.getType()); 
-ps.setString(9,record.getFullName()); 
-ps.setString(10,record.getGender()); 
-ps.setString(11,record.getEmail()); 
-if(record.getBirthDate() !=null){ps.setDate(12, new java.sql.Date(record.getBirthDate().getTime()));} 
- else{ps.setDate(12,new java.sql.Date(new java.util.Date().getTime()));}
-ps.setString(13,record.getMobilePrefix()); 
-ps.setString(14,record.getMobileNumber()); 
-ps.setString(15,record.getBloodType()); 
-ps.setString(16,record.getHealthProblems()); 
-ps.setString(17,record.getMedications()); 
-ps.setString(18,record.getUserId()); 
-ps.setBoolean(19,record.getVip()); 
-ps.setBoolean(20,record.getActive()); 
-ps.setInt(21,record.getAge()); 
-ps.setString(22,record.getMemberNumber()); 
+ps.setString(8,record.getMemberId()); 
+ps.setLong(9,record.getCheckIn()); 
+ps.setBoolean(10,record.getExpired()); 
 
  int i = ps.executeUpdate();} catch(Exception e){logger.error("Error", e);}
         finally{ 
@@ -105,17 +80,17 @@ ps.setString(22,record.getMemberNumber());
    Connection con = null;   Statement stmt = null;int i=0;   try{ con = org.legion.util.MainDataSource.getConnection();
             stmt = con.createStatement();
 
-            i = stmt.executeUpdate("DELETE FROM member WHERE row_id='" + record_ID+"'");
+            i = stmt.executeUpdate("DELETE FROM check_in WHERE row_id='" + record_ID+"'");
             }catch(Exception e){logger.error("Error", e);}   finally{
    try { if(stmt != null )stmt.close();
    if(con != null ) con.close(); } catch(SQLException sqlex){logger.error("SQL Error", sqlex);}
 }            
     return i;    }
 //--------- UPDATE METHOD--------
-  public void updateRecord(Member record) { Connection con = null;
+  public void updateRecord(CheckIn record) { Connection con = null;
  PreparedStatement ps = null;
  try { con = org.legion.util.MainDataSource.getConnection();
- ps = con.prepareStatement("UPDATE member SET row_id = ?, created_at = ?, created_by = ?, updated_at = ?, update_by = ?, deleted_at = ?, deleted_by = ?, type = ?, full_name = ?, gender = ?, email = ?, birth_date = ?, mobile_prefix = ?, mobile_number = ?, blood_type = ?, health_problems = ?, medications = ?, user_id = ?, vip = ?, active = ?, age = ?, member_number = ? WHERE row_id=? ");
+ ps = con.prepareStatement("UPDATE check_in SET row_id = ?, created_at = ?, created_by = ?, updated_at = ?, update_by = ?, deleted_at = ?, deleted_by = ?, member_id = ?, check_in = ?, expired = ? WHERE row_id=? ");
 ps.setString(1,record.getRowId()); 
 ps.setLong(2,record.getCreatedAt()); 
 ps.setString(3,record.getCreatedBy()); 
@@ -123,23 +98,10 @@ ps.setLong(4,record.getUpdatedAt());
 ps.setString(5,record.getUpdateBy()); 
 ps.setLong(6,record.getDeletedAt()); 
 ps.setString(7,record.getDeletedBy()); 
-ps.setString(8,record.getType()); 
-ps.setString(9,record.getFullName()); 
-ps.setString(10,record.getGender()); 
-ps.setString(11,record.getEmail()); 
-if (record.getBirthDate() != null) {ps.setDate(12,new java.sql.Date(record.getBirthDate().getTime()));}
-else{ps.setDate(12,new java.sql.Date(new java.util.Date().getTime()));} 
-ps.setString(13,record.getMobilePrefix()); 
-ps.setString(14,record.getMobileNumber()); 
-ps.setString(15,record.getBloodType()); 
-ps.setString(16,record.getHealthProblems()); 
-ps.setString(17,record.getMedications()); 
-ps.setString(18,record.getUserId()); 
-ps.setBoolean(19,record.getVip()); 
-ps.setBoolean(20,record.getActive()); 
-ps.setInt(21,record.getAge()); 
-ps.setString(22,record.getMemberNumber()); 
-ps.setString(23,record.getRowId()); 
+ps.setString(8,record.getMemberId()); 
+ps.setLong(9,record.getCheckIn()); 
+ps.setBoolean(10,record.getExpired()); 
+ps.setString(11,record.getRowId()); 
    int i = ps.executeUpdate();
  } catch(Exception e){
    logger.error("Error", e);}
@@ -154,18 +116,18 @@ ps.setString(23,record.getRowId());
 }            
 }
 //--------- LIST METHOD ALL RECORDS--------
-public List<Member> getList() {
+public List<CheckIn> getList() {
 Connection con = null;
 PreparedStatement stmt = null;
 ResultSet rs = null;
-List<Member> listOfRecords = new ArrayList<>();
+List<CheckIn> listOfRecords = new ArrayList<>();
          try {con = org.legion.util.MainDataSource.getConnection();
-        String query = "select * from member where deleted_by is null";
+        String query = "select * from check_in where deleted_by is null";
         logger.info(query);
          stmt = con.prepareStatement(query);
          rs = stmt.executeQuery();
         while (rs.next()) {
-Member entity_record = new Member();
+CheckIn entity_record = new CheckIn();
 entity_record.setRowId(rs.getString("row_id")); 
 entity_record.setCreatedAt(rs.getLong("created_at"));
 entity_record.setCreatedBy(rs.getString("created_by")); 
@@ -173,21 +135,9 @@ entity_record.setUpdatedAt(rs.getLong("updated_at"));
 entity_record.setUpdateBy(rs.getString("update_by")); 
 entity_record.setDeletedAt(rs.getLong("deleted_at"));
 entity_record.setDeletedBy(rs.getString("deleted_by")); 
-entity_record.setType(rs.getString("type")); 
-entity_record.setFullName(rs.getString("full_name")); 
-entity_record.setGender(rs.getString("gender")); 
-entity_record.setEmail(rs.getString("email")); 
-entity_record.setBirthDate(rs.getDate("birth_date"));
-entity_record.setMobilePrefix(rs.getString("mobile_prefix")); 
-entity_record.setMobileNumber(rs.getString("mobile_number")); 
-entity_record.setBloodType(rs.getString("blood_type")); 
-entity_record.setHealthProblems(rs.getString("health_problems")); 
-entity_record.setMedications(rs.getString("medications")); 
-entity_record.setUserId(rs.getString("user_id")); 
-entity_record.setVip(rs.getBoolean("vip"));
-entity_record.setActive(rs.getBoolean("active"));
-entity_record.setAge(rs.getInt("age"));
-entity_record.setMemberNumber(rs.getString("member_number")); 
+entity_record.setMemberId(rs.getString("member_id")); 
+entity_record.setCheckIn(rs.getLong("check_in"));
+entity_record.setExpired(rs.getBoolean("expired"));
         listOfRecords.add(entity_record);
  }
    }catch(Exception e){logger.error("Error", e);}
@@ -199,19 +149,19 @@ entity_record.setMemberNumber(rs.getString("member_number"));
         return listOfRecords;
 }
 //--------- LIST METHOD WHERE STATEMENT--------
-public List<Member> getList(String myQuery) throws Exception {
+public List<CheckIn> getList(String myQuery) throws Exception {
 Connection con = null;
 PreparedStatement stmt = null;
 ResultSet rs = null;
-List<Member> listOfRecords = new ArrayList<>();
+List<CheckIn> listOfRecords = new ArrayList<>();
         try {  
            con = org.legion.util.MainDataSource.getConnection();
-        String query = "select * from member where deleted_by is null and " + myQuery;
+        String query = "select * from check_in where deleted_by is null and " + myQuery;
         logger.info(query);
         stmt = con.prepareStatement(query);
         rs = stmt.executeQuery();
         while (rs.next()) {
-Member entity_record = new Member();
+CheckIn entity_record = new CheckIn();
 entity_record.setRowId(rs.getString("row_id")); 
 entity_record.setCreatedAt(rs.getLong("created_at"));
 entity_record.setCreatedBy(rs.getString("created_by")); 
@@ -219,21 +169,9 @@ entity_record.setUpdatedAt(rs.getLong("updated_at"));
 entity_record.setUpdateBy(rs.getString("update_by")); 
 entity_record.setDeletedAt(rs.getLong("deleted_at"));
 entity_record.setDeletedBy(rs.getString("deleted_by")); 
-entity_record.setType(rs.getString("type")); 
-entity_record.setFullName(rs.getString("full_name")); 
-entity_record.setGender(rs.getString("gender")); 
-entity_record.setEmail(rs.getString("email")); 
-entity_record.setBirthDate(rs.getDate("birth_date"));
-entity_record.setMobilePrefix(rs.getString("mobile_prefix")); 
-entity_record.setMobileNumber(rs.getString("mobile_number")); 
-entity_record.setBloodType(rs.getString("blood_type")); 
-entity_record.setHealthProblems(rs.getString("health_problems")); 
-entity_record.setMedications(rs.getString("medications")); 
-entity_record.setUserId(rs.getString("user_id")); 
-entity_record.setVip(rs.getBoolean("vip"));
-entity_record.setActive(rs.getBoolean("active"));
-entity_record.setAge(rs.getInt("age"));
-entity_record.setMemberNumber(rs.getString("member_number")); 
+entity_record.setMemberId(rs.getString("member_id")); 
+entity_record.setCheckIn(rs.getLong("check_in"));
+entity_record.setExpired(rs.getBoolean("expired"));
         listOfRecords.add(entity_record);
  }
    }catch(Exception e){logger.error("Error", e); throw e;}

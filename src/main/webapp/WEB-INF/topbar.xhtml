@@ -19,19 +19,22 @@
                         <i class="pi pi-bars"></i>
                     </a>
                     <h:link id="logolink" outcome="/views/homepage" styleClass="layout-topbar-logo">
-                        <p:graphicImage name="images/logo.png"/>
+                        <p:graphicImage name="images/ug-logo.png"/>
                     </h:link>
                 </div>
                 <ui:include src="./menu.xhtml"/>
 
                 <div class="layout-topbar-right">
                     <ul class="layout-topbar-actions">
-                        <li class="topbar-item user-profile" style="width: 200px;">
-                            <h:outputText value="#{loginBean.loggedInUser.fullName}" />
+                        <li class="topbar-item user-profile" style="min-width: 150px">
+                            <i class="fa fa-user" style="margin-right: 5px; font-size: large"/>
+                            <h:outputText style="font-size: large"
+                                          value="#{loginBean.loggedInUser.username} (#{loginBean.loggedInUser.role})"/>
                         </li>
-                        <li class="topbar-item user-profile">
-                            <p:commandLink actionListener="#{loginBean.logout}">
-                                <i class="pi pi-sign-out" />
+                        <li class="topbar-item user-profile" style="min-width: 150px">
+                            <p:commandLink actionListener="#{loginBean.logout}"
+                                           style="margin-right: 5px; font-size: large">
+                                <i class="fa fa-sign-out"/> Sign Out
                             </p:commandLink>
                         </li>
                     </ul>

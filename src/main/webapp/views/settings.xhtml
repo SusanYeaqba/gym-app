@@ -1,0 +1,65 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">Ultra Gym - Settings</ui:define>
+    <ui:define name="content">
+        <div class="p-grid">
+            <div class="p-col">
+                <div class="card">
+                    <h4>System Settings</h4>
+                    <h:form id="settings">
+                        <p:dataTable value="#{settingsBean.paramList}" var="para" scrollable="true" scrollHeight="400"
+                                     selectionMode="single"
+                                     scrollRows="15" selection="#{settingsBean.param}" rowKey="#{para.rowId}">
+                            <f:facet name="header">
+                                <p:commandButton id="newBtn" value="New" icon="pi pi-file" styleClass="p-mr-2"
+                                                 actionListener="#{settingsBean.clearParam}" update=":param-form"
+                                                 oncomplete="PF('param-form').show()"/>
+                                <p:commandButton id="editBtn" value="Edit" icon="pi pi-pencil"
+                                                 styleClass="success-button p-mr-2"
+                                                 update=":param-form"
+                                                 disabled="#{empty settingsBean.param.rowId}"
+                                                 oncomplete="PF('param-form').show()"/> 
+                            </f:facet>
+                            <p:ajax event="rowSelect" update=":settings editBtn"/>
+                            <p:column field="code" width="20%"/>
+                            <p:column field="value" width="80%"/>
+                        </p:dataTable>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+
+        <!-- New/Edit param Dialog-->
+        <h:form prependId="false">
+            <p:dialog header="New/Edit param" widgetVar="param-form" responsive="true" modal="true" blockScroll="true">
+                <p:separator/>
+                <p:scrollPanel id="param-form" style="height: 400px;width: 100%">
+                    <p:autoUpdate/>
+                    <p:panelGrid layout="flex" columns="1" style="width: inherit!important;">
+                        <p:outputLabel for="@next" value="Parameter Code"/>
+                        <p:inputText style="width: 100%" value="#{settingsBean.param.code}" required="true" maxlength="100" />
+                        <p:outputLabel for="@next" value="Parameter Value"/>
+                        <p:inputTextarea style="width: 100%" rows="5"  value="#{settingsBean.param.value}" required="true" maxlength="1000" />
+                    </p:panelGrid>
+                </p:scrollPanel>
+                <f:facet name="footer">
+                    <p:separator/>
+                    <p:commandButton icon="pi pi-save" actionListener="#{settingsBean.saveParam}"
+                                     update=":settings" value="Save" styleClass="p-mr-2"
+                                     oncomplete="if(args &amp;&amp; !args.validationFailed) PF('param-form').hide()"/>
+                    <p:commandButton icon="pi pi-ban" resetValues="true" value="Cancel"
+                                     styleClass="danger-button" oncomplete="PF('param-form').hide()"/>
+                </f:facet>
+            </p:dialog>
+        </h:form>
+
+
+    </ui:define>
+
+</ui:composition>

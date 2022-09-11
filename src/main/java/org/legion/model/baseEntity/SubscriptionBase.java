@@ -37,6 +37,7 @@ private BigDecimal FinalPrice = BigDecimal.ZERO;
 private BigDecimal PaidAmount = BigDecimal.ZERO; 
 private boolean FullPaid; 
 private BigDecimal BonusPeriod = BigDecimal.ZERO; 
+private boolean Active; 
 
     public SubscriptionBase() {
     }
@@ -302,6 +303,18 @@ return this.BonusPeriod;}
 
 
 this.BonusPeriod = BonusPeriod;}
+
+
+ public boolean getActive() {
+return this.Active;}
+
+
+
+
+  public void setActive(boolean Active) {
+
+
+this.Active = Active;}
 
 
  

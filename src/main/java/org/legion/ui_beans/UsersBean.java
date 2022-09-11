@@ -1,4 +1,4 @@
-package org.legion.ui_beans.administration;
+package org.legion.ui_beans;
 
 import lombok.Getter;
 import lombok.Setter;

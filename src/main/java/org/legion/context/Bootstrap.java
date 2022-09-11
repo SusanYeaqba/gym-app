@@ -2,6 +2,7 @@ package org.legion.context;
 
 import lombok.extern.slf4j.Slf4j;
 import org.legion.util.MainDataSource;
+import org.legion.util.SystemParams;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -16,6 +17,8 @@ public class Bootstrap implements ServletContextListener {
     public void contextInitialized(ServletContextEvent sce) {
         try {
             log.info("<<<<<< initializing system context >>>>>>");
+            SystemParams.reloadParamsMap();
+            MainDataSource.executeQuery("update subscription set active = 0 where getdate() > end_date ");
         } catch (Exception e) {
             log.error("Error during system context bootstrap", e);
         }

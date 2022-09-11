@@ -1,0 +1,175 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">Ultra Gym - Members</ui:define>
+    <ui:define name="content">
+        <style>
+            body {
+                overflow: hidden;
+            }
+
+            input {
+                min-width: 100% !important;
+            }
+
+            .inactive {
+                color: #a00000 !important;
+                background-color: #e1e1e1 !important;
+            }
+        </style>
+        <div class="p-grid">
+            <div class="p-col">
+                <div class="card">
+                    <h4>Ultra Gym - Members</h4>
+                    <h:form prependId="false">
+                        <p:toolbar id="toolbar">
+                            <f:facet name="left">
+                                <h:panelGrid columns="4" cellspacing="5">
+                                    <p:commandButton value="Create New Member" icon="pi pi-plus"
+                                                     actionListener="#{membersBean.clearMember}" update="memberForm"
+                                                     oncomplete="PF('newMember').show()"/>
+                                    <p:commandButton icon="pi pi-pencil" styleClass="success-button"
+                                                     disabled="#{empty membersBean.currentMember.rowId}"
+                                                     value="Edit Member Profile"
+                                                     update="memberForm" oncomplete="PF('newMember').show()"/>
+                                </h:panelGrid>
+                            </f:facet>
+                            <f:facet name="right">
+                                <p:inputText style="width: 500px;" value="#{membersBean.memberSearchText}"
+                                             placeholder="Search Members (Name, mobile number or email)">
+                                    <p:ajax update="data" event="keyup" listener="#{membersBean.loadMembers}"/>
+                                </p:inputText>
+                            </f:facet>
+                        </p:toolbar>
+                        <p:dataTable id="data" value="#{membersBean.memberList}" var="mem" selectionMode="single"
+                                     rowStyleClass="#{mem.active ? 'active' : 'inactive'}"
+                                     rowKey="#{mem.rowId}" selection="#{membersBean.currentMember}"
+                                     scrollable="true" scrollRows="20" scrollHeight="350">
+                            <p:ajax event="rowSelect" listener="#{membersBean.selectMember}" update="@parent toolbar"/>
+                            <p:ajax event="rowDblselect" listener="#{mem.loadSubscriptions}" update="@parent toolbar"/>
+                            <p:column headerText="Subscribed" width="5%">
+                                <h:panelGroup rendered="#{empty mem.activeSubscription}" class="fa fa-exclamation-triangle fa-2x" style="color: #c21d12"/>
+                                <h:panelGroup rendered="#{not empty mem.activeSubscription}" class="fa fa-check-circle fa-2x" style="color: #4acb78"/>
+                            </p:column>
+                            <p:column field="type" filterMatchMode="contains"/>
+                            <p:column field="fullName" filterMatchMode="contains"/>
+                            <p:column field="mobileNumber" filterMatchMode="contains"/>
+                            <p:column field="email" filterMatchMode="contains"/>
+                            <p:column field="gender" filterMatchMode="contains"/>
+                            <p:column field="birthDate" filterMatchMode="contains"/>
+                            <p:column field="vip" width="5%"/>
+                            <p:column field="active" width="5%"/>
+                        </p:dataTable>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+
+        <p:sidebar style="width: 35%" position="right" widgetVar="newMember">
+            <h:form id="memberForm" prependId="false">
+                <h:panelGrid cellspacing="5" columns="4">
+                    <p:commandButton value="Save" icon="pi pi-save"
+                                     actionListener="#{membersBean.saveMember}"
+                                     update="@form :data"
+                                     oncomplete="if(args &amp;&amp; !args.validationFailed) PF('newMember').hide()"/>
+                    <p:commandButton value="Cancel" icon="pi pi-times" update="@form"
+                                     actionListener="#{membersBean.clearMember}"
+                                     styleClass="danger-button" oncomplete="PF('newMember').hide()"/>
+                    <p:commandButton value="Deactivate Member" update=":data"
+                                     actionListener="#{membersBean.disableMember}"
+                                     oncomplete="PF('newMember').hide()"
+                                     rendered="#{not empty membersBean.currentMember.rowId}"
+                                     icon="pi pi-ban" styleClass="danger-button"/>
+
+                    <p:commandButton value="Create User for Member" update=":data"
+                                     actionListener="#{membersBean.makeMemberUserAccount}"
+                                     oncomplete="PF('newMember').hide()"
+                                     disabled="#{not empty membersBean.currentMember.userId}"
+                                     rendered="#{not empty membersBean.currentMember.rowId}"
+                                     icon="pi pi-key" styleClass="secondary-button"/>
+
+                </h:panelGrid>
+                <p:scrollPanel style="height: 85vh">
+                    <h:panelGrid cellspacing="5" columns="1" style="width: 100%">
+
+                        <p:outputLabel for="@next" value="Full Name"/>
+                        <p:inputText required="true" requiredMessage="Member full name is required"
+                                     placeholder="Member full name" value="#{membersBean.currentMember.fullName}"/>
+
+                        <p:outputLabel for="@next" value="Type"/>
+                        <p:selectOneMenu style="width: 100%" value="#{membersBean.currentMember.type}">
+                            <f:selectItem itemLabel="Client" itemValue="Client"/>
+                            <f:selectItem itemLabel="Trainer" itemValue="Trainer"/>
+                        </p:selectOneMenu>
+
+
+                        <p:outputLabel for="mobileNumber" value="Mobile Number"/>
+                        <h:panelGrid cellspacing="5" columns="2" style="width: 100%">
+                            <p:selectOneMenu style="width: 100%" value="#{membersBean.currentMember.mobilePrefix}">
+                                <f:selectItem itemLabel="+970" itemValue="00970"/>
+                                <f:selectItem itemLabel="+972" itemValue="00972"/>
+                            </p:selectOneMenu>
+                            <p:inputText required="true" id="mobileNumber"
+                                         requiredMessage="Mobile number is required"
+                                         placeholder="Mobile number starting with 597... etc"
+                                         style="width: 100%!important;"
+                                         value="#{membersBean.currentMember.mobileNumber}"/>
+                        </h:panelGrid>
+
+                        <p:outputLabel for="@next" value="Birthdate"/>
+                        <p:calendar navigator="true" required="true" requiredMessage="Birthdate is required"
+                                    pattern="yyyy-MM-dd"
+                                    placeholder="Date of birth (YYYY-MM-DD)"
+                                    value="#{membersBean.currentMember.birthDate}"/>
+
+
+                        <p:outputLabel for="@next" value="Gender"/>
+                        <p:selectOneMenu style="width: 100%" value="#{membersBean.currentMember.gender}">
+                            <f:selectItem itemLabel="Male" itemValue="M"/>
+                            <f:selectItem itemLabel="Female" itemValue="F"/>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel for="@next" value="Email"/>
+                        <p:inputText value="#{membersBean.currentMember.email}" placeholder="Email (Optional)"/>
+
+
+                        <p:outputLabel for="@next" value="Blood Type"/>
+                        <p:selectOneMenu style="width: 100%" value="#{membersBean.currentMember.bloodType}">
+                            <f:selectItem itemLabel="A+" itemValue="A+"/>
+                            <f:selectItem itemLabel="A-" itemValue="A-"/>
+                            <f:selectItem itemLabel="B+" itemValue="B+"/>
+                            <f:selectItem itemLabel="B-" itemValue="B-"/>
+                            <f:selectItem itemLabel="O+" itemValue="O+"/>
+                            <f:selectItem itemLabel="O-" itemValue="O-"/>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel for="@next" value="Medical/Health Issues"/>
+                        <p:inputTextarea rows="5" autoResize="true" style="width: 100%"
+                                         placeholder="If member has any current or chronic illness or health problem, please describe here"
+                                         maxlength="4000" value="#{membersBean.currentMember.healthProblems}"/>
+
+                        <p:outputLabel for="@next" value="Undergoing Medications"/>
+                        <p:inputTextarea rows="5" autoResize="true" style="width: 100%"
+                                         placeholder="If member is currently under any medication or undergoing any treatment, please describe here"
+                                         maxlength="4000" value="#{membersBean.currentMember.medications}"/>
+
+                        <h:panelGrid columns="4" cellspacing="5">
+                            <p:outputLabel value="VIP"/>
+                            <p:selectBooleanCheckbox value="#{membersBean.currentMember.vip}"/>
+
+                            <p:outputLabel value="Active"/>
+                            <p:selectBooleanCheckbox value="#{membersBean.currentMember.active}"/>
+                        </h:panelGrid>
+
+                    </h:panelGrid>
+                </p:scrollPanel>
+            </h:form>
+        </p:sidebar>
+    </ui:define>
+
+</ui:composition>

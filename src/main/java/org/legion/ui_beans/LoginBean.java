@@ -1,4 +1,4 @@
-package org.legion.ui_beans.auth;
+package org.legion.ui_beans;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -6,10 +6,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.legion.model.dao.UserAccountDAO;
 import org.legion.model.entity.UserAccount;
 import org.legion.ui_beans.ParentBean;
+import org.legion.util.MainDataSource;
+
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import java.io.Serializable;
+import java.util.Date;
 
 @Named
 @SessionScoped
@@ -38,7 +41,19 @@ public class LoginBean extends ParentBean implements Serializable {
         try {
             loggedInUser = userDAO.login(username, password);
             if (loggedInUser != null) {
+                if(!loggedInUser.getActive()){
+                    showErrorMessage("User Disabled", "User account has been disabled, contact system administrator.");
+                    return "";
+                }
+
+                if(loggedInUser.getRole().equals("Client") || loggedInUser.getRole().equals("Trainer")){
+                    showErrorMessage("Login For Members Un-Available", "Ultra Gym web portal will be available for members soon.");
+                    return "";
+                }
+
                 putValueToSession("loggedInUser", loggedInUser);
+                loggedInUser.setLastLogin(new Date());
+                userDAO.saveRecord(loggedInUser);
                 return "views/dashboard.xhtml?faces-redirect=true";
             } else {
                 showErrorMessage("Incorrect credentials", "Email or Password is incorrect, please try again.");
