@@ -11,6 +11,7 @@ import org.legion.model.entity.Member;
 import org.legion.model.entity.PreSignup;
 import org.legion.model.entity.Subscription;
 import org.legion.model.entity.UserAccount;
+import org.legion.util.MainDataSource;
 import org.legion.util.Utilities;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.SelectEvent;
@@ -110,6 +111,7 @@ public class MembersBean extends ParentBean implements Serializable {
             if (isNew) {
                 currentMember.setCreatedBy(user());
                 currentMember.setCreatedAt(now());
+                currentMember.setMemberNumber(MainDataSource.executeDecimalResultQuery("select max(member_number) from member").intValue() + 1);
             }
 
 
@@ -161,7 +163,7 @@ public class MembersBean extends ParentBean implements Serializable {
                 account.setRole(currentMember.getType());
                 account.setCreatedAt(now());
                 account.setCreatedBy(user());
-                account.setUsername(currentMember.getFullName().toLowerCase().replaceAll(" ", "."));
+                account.setUsername(currentMember.getMobileNumber());
 
                 List<UserAccount> userAccounts = userAccountDAO.getList("username = '"+account.getUsername()+"'");
                 if(userAccounts != null & !userAccounts.isEmpty()){

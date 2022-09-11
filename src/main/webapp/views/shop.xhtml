@@ -6,13 +6,53 @@
                 template="/WEB-INF/template.xhtml">
 
     <ui:define name="title">Ultra Gym - Shop</ui:define>
-    
+
     <ui:define name="content">
         <div class="p-grid">
             <div class="p-col">
                 <div class="card">
-                    <h4>Empty Page</h4>
-                    <p>This is your empty page template to start building beautiful applications.</p>
+                    <h4>Gym Cafeteria &amp; Shop</h4>
+                    <h:form>
+                        <p:carousel style="width: 93vw" value="#{shopBean.categories}" var="cat" numVisible="5"
+                                    numScroll="5" circular="true">
+                            <f:facet name="header">
+                                <h5>Categories</h5>
+                            </f:facet>
+                            <p:commandLink update="@form :items" actionListener="#{shopBean.selectCategory(cat)}">
+                                <span style="display: block; text-align: center; background:#{shopBean.currentCategory.rowId eq cat.rowId ? '#FF810E' : ''};">
+                                <p:graphicImage height="100" value="#{cat.image}"/>
+                            </span>
+                                <h:outputText
+                                        style="display: block; font-size: larger; text-align: center; color:#{shopBean.currentCategory.rowId eq cat.rowId ? 'red' : ''} "
+                                        value="#{cat.description}"/>
+                            </p:commandLink>
+                        </p:carousel>
+                    </h:form>
+                    <br/>
+                    <h:form id="items">
+                        <p:dataGrid layout="grid" columns="5" value="#{shopBean.items}" var="item">
+                            <f:facet name="header">
+                                <h5>Products &amp; Items #{not empty shopBean.currentCategory.rowId ? 'In '.concat(shopBean.currentCategory.description) : ''}</h5>
+                                <p:separator/>
+                                <p:inputText style="width: 100%" placeholder="Search Item via Name or Barcode"
+                                             value="#{shopBean.itemSearch}"/>
+                            </f:facet>
+                            <p:commandLink>
+                                <span style="display: block; text-align: center; ">
+                                <p:graphicImage height="100" value="#{item.image}"/>
+                            </span>
+                                <h:outputText
+                                        style="display: block; font-size: larger; text-align: center;  "
+                                        value="#{item.description}"/>
+                                <h:outputText
+                                        style="display: block; font-size: larger; text-align: center;  "
+                                        value="Price: #{item.sellPrice}"/>
+                                <h:outputText
+                                        style="display: block; font-size: larger; text-align: center;  "
+                                        value="Available: #{item.onHand}"/>
+                            </p:commandLink>
+                        </p:dataGrid>
+                    </h:form>
                 </div>
             </div>
         </div>

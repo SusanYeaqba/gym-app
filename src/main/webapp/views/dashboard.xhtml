@@ -12,33 +12,38 @@
                 overflow: hidden;
             }
 
-            #memberNumber {
-                width: 100%;
-                padding: 10px;
-                font-size: larger;
+            .memberNumber,.memberNumber input {
+                width: 100% !important;
+                font-size: larger !important;
             }
 
             .kpi{
                 text-align: center;
+                color: black;
+            }
+            .ui-panel-titlebar{
+                background: #c6353a !important;
+                color: #ffffff !important;
             }
         </style>
         <div class="p-grid">
             <div class="p-col">
                 <div class="card">
                     <h:form rendered="#{loginBean.loggedInUser.staff}" prependId="false">
+                        <p:poll autoStart="true" listener="#{dashboardBean.reloadDashboard}" interval="10" update=":kpi" />
                         <h4>Ultra Gym - Member Search</h4>
                         <div class="ui-inputgroup">
                             <div class="ui-inputgroup-addon"><i class="pi pi-search"></i></div>
-                            <p:inputText id="memberNumber" placeholder="Member Number"
+                            <p:inputNumber id="memberNumber" styleClass="memberNumber" decimalPlaces="0" thousandSeparator="" placeholder="Member Number"
                                          value="#{dashboardBean.memberSearch}">
                                 <p:ajax event="change" update="@this :subDetails"
                                         listener="#{dashboardBean.searchMember}"
                                         oncomplete="$('#memberNumber').focus();"/>
-                            </p:inputText>
+                            </p:inputNumber>
                         </div>
                     </h:form>
 
-                    <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank">
+                    <p:panelGrid id="kpi" columns="4" layout="grid" styleClass="ui-panelgrid-blank">
                         <p:panel header="Total Members">
                             <h3 class="kpi">
                                 #{dashboardBean.totalMembers}
@@ -146,7 +151,7 @@
         </p:sidebar>
 
         <script>
-            $('#memberNumber').focus();
+            $('#memberNumber_input').focus();
         </script>
     </ui:define>
 

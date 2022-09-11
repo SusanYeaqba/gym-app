@@ -35,7 +35,7 @@ private String UserId;
 private boolean Vip; 
 private boolean Active; 
 private Integer Age = 0; 
-private String MemberNumber; 
+private Integer MemberNumber = 0; 
 
     public MemberBase() {
     }
@@ -293,13 +293,13 @@ return this.Age;}
 this.Age = Age;}
 
 
- public String getMemberNumber() {
+ public Integer getMemberNumber() {
 return this.MemberNumber;}
 
 
 
 
-  public void setMemberNumber(String MemberNumber) {
+  public void setMemberNumber(Integer MemberNumber) {
 
 
 this.MemberNumber = MemberNumber;}

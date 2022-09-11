@@ -109,6 +109,7 @@ public class PreSignupBean extends ParentBean implements Serializable {
                 return;
             }
 
+            member.setMemberNumber(MainDataSource.executeDecimalResultQuery("select max(member_number) from member").intValue() + 1);
             memberDAO.saveRecord(member);
 
             if (member.getRowId() != null) {

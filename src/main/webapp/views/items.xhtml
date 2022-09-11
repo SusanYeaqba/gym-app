@@ -1,0 +1,95 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">Ultra Gym - Shop Item Setup</ui:define>
+    <ui:define name="content">
+        <div class="p-grid">
+            <div class="p-col">
+                <div class="card">
+                    <h4>Shop Items Setup</h4>
+                    <h:form id="items">
+                        <p:dataTable value="#{itemsBean.items}" var="usr" scrollable="true" scrollHeight="400"
+                                     selectionMode="single"
+                                     scrollRows="15" selection="#{itemsBean.currentItem}" rowKey="#{usr.rowId}">
+                            <f:facet name="header">
+                                <p:commandButton id="newBtn" value="New" icon="pi pi-file" styleClass="p-mr-2"
+                                                 actionListener="#{itemsBean.clearItem}" update=":item-form"
+                                                 oncomplete="PF('item-form').show()"/>
+                                <p:commandButton id="editBtn" value="Edit" icon="pi pi-pencil"
+                                                 styleClass="success-button p-mr-2"
+                                                 update=":item-form"
+                                                 disabled="#{empty itemsBean.currentItem.rowId}"
+                                                 oncomplete="PF('item-form').show()"/>
+                            </f:facet>
+                            <p:ajax event="rowSelect" update=":items @(.ui-button)"/>
+                            <p:column headerText="Category" width="15%" field="categoryId" filterMatchMode="contains"/>
+                            <p:column headerText="Barcode" width="15%" field="barcode" filterMatchMode="contains"/>
+                            <p:column headerText="Description" width="15%" field="description" filterMatchMode="contains"/>
+                            <p:column headerText="Sell Price" width="15%" field="sellPrice" filterMatchMode="contains"/>
+                            <p:column headerText="Blend?" width="7%" field="blend" filterMatchMode="contains"/>
+                            <p:column headerText="Stock On Hand" width="15%" field="onHand" filterMatchMode="contains"/>
+                            <p:column headerText="Enabled" width="7%" field="active" filterMatchMode="contains"/>
+                        </p:dataTable>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+
+        <!-- New/Edit Item Dialog-->
+        <h:form prependId="false">
+            <p:dialog header="New/Edit Item" widgetVar="item-form" width="800" modal="true" blockScroll="true">
+                <p:messages>
+                    <p:autoUpdate/>
+                </p:messages>
+                <p:separator/>
+                <p:scrollPanel id="item-form" style="height: 400px;width: 100%">
+                    <p:autoUpdate/>
+
+                    <p:panelGrid layout="flex" columns="2" style="width: inherit!important;">
+                        <p:outputLabel for="@next" value="Category"/>
+                        <p:selectOneMenu value="#{itemsBean.currentItem.categoryId}" styleClass="my-input" >
+                            <f:selectItems value="#{itemsBean.categories}" var="cat" itemLabel="#{cat.description}" itemValue="#{cat.rowId}" />
+                        </p:selectOneMenu>
+
+                        <p:outputLabel for="@next" value="Barcode"/>
+                        <p:inputText value="#{itemsBean.currentItem.barcode}" styleClass="my-input"/>
+
+                        <p:outputLabel for="@next" value="Description"/>
+                        <p:inputText value="#{itemsBean.currentItem.description}" styleClass="my-input"/>
+
+                        <p:outputLabel for="@next" value="Cost"/>
+                        <p:inputNumber inputStyleClass="my-input" value="#{itemsBean.currentItem.cost}" styleClass="my-input"/>
+
+                        <p:outputLabel for="@next" value="Sell Price"/>
+                        <p:inputNumber inputStyleClass="my-input" value="#{itemsBean.currentItem.sellPrice}" styleClass="my-input"/>
+
+                        <p:outputLabel for="@next" value="On Hand Stock"/>
+                        <p:inputNumber inputStyleClass="my-input" value="#{itemsBean.currentItem.onHand}" styleClass="my-input"/>
+
+                        <p:outputLabel for="@next" value="Blend"/>
+                        <p:selectBooleanCheckbox value="#{itemsBean.currentItem.blend}"/>
+
+                        <p:outputLabel for="@next" value="Enabled"/>
+                        <p:selectBooleanCheckbox value="#{itemsBean.currentItem.active}"/>
+                    </p:panelGrid>
+                </p:scrollPanel>
+                <f:facet name="footer">
+                    <p:separator/>
+                    <p:commandButton icon="pi pi-save" actionListener="#{itemsBean.saveItem}"
+                                     update=":items" value="Save" styleClass="p-mr-2"
+                                     oncomplete="if(args &amp;&amp; !args.validationFailed) PF('item-form').hide()"/>
+                    <p:commandButton icon="pi pi-ban" resetValues="true" value="Cancel"
+                                     styleClass="danger-button" oncomplete="PF('item-form').hide()"/>
+                </f:facet>
+            </p:dialog>
+        </h:form>
+
+
+    </ui:define>
+
+</ui:composition>

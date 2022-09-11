@@ -49,7 +49,7 @@ entity_record.setUserId(rs.getString("user_id"));
 entity_record.setVip(rs.getBoolean("vip"));
 entity_record.setActive(rs.getBoolean("active"));
 entity_record.setAge(rs.getInt("age"));
-entity_record.setMemberNumber(rs.getString("member_number")); 
+entity_record.setMemberNumber(rs.getInt("member_number"));
         }
        }catch(Exception e){
         logger.error("Error", e); throw e;       }
@@ -90,7 +90,7 @@ ps.setString(18,record.getUserId());
 ps.setBoolean(19,record.getVip()); 
 ps.setBoolean(20,record.getActive()); 
 ps.setInt(21,record.getAge()); 
-ps.setString(22,record.getMemberNumber()); 
+ps.setInt(22,record.getMemberNumber()); 
 
  int i = ps.executeUpdate();} catch(Exception e){logger.error("Error", e);}
         finally{ 
@@ -138,7 +138,7 @@ ps.setString(18,record.getUserId());
 ps.setBoolean(19,record.getVip()); 
 ps.setBoolean(20,record.getActive()); 
 ps.setInt(21,record.getAge()); 
-ps.setString(22,record.getMemberNumber()); 
+ps.setInt(22,record.getMemberNumber()); 
 ps.setString(23,record.getRowId()); 
    int i = ps.executeUpdate();
  } catch(Exception e){
@@ -187,7 +187,7 @@ entity_record.setUserId(rs.getString("user_id"));
 entity_record.setVip(rs.getBoolean("vip"));
 entity_record.setActive(rs.getBoolean("active"));
 entity_record.setAge(rs.getInt("age"));
-entity_record.setMemberNumber(rs.getString("member_number")); 
+entity_record.setMemberNumber(rs.getInt("member_number"));
         listOfRecords.add(entity_record);
  }
    }catch(Exception e){logger.error("Error", e);}
@@ -233,7 +233,7 @@ entity_record.setUserId(rs.getString("user_id"));
 entity_record.setVip(rs.getBoolean("vip"));
 entity_record.setActive(rs.getBoolean("active"));
 entity_record.setAge(rs.getInt("age"));
-entity_record.setMemberNumber(rs.getString("member_number")); 
+entity_record.setMemberNumber(rs.getInt("member_number"));
         listOfRecords.add(entity_record);
  }
    }catch(Exception e){logger.error("Error", e); throw e;}
