@@ -46,9 +46,8 @@ public class LoginBean extends ParentBean implements Serializable {
                     return "";
                 }
 
-                if(loggedInUser.getRole().equals("Client") || loggedInUser.getRole().equals("Trainer")){
-                    showErrorMessage("Login For Members Un-Available", "Ultra Gym web portal will be available for members soon.");
-                    return "";
+                if(loggedInUser.isClient()){
+                    loggedInUser.getMember().loadSubscriptions();
                 }
 
                 putValueToSession("loggedInUser", loggedInUser);

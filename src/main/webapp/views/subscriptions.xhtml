@@ -8,11 +8,16 @@
     <ui:define name="title">Ultra Gym - Subscriptions</ui:define>
 
     <ui:define name="content">
+        <style>
+            .ui-blockui {
+                opacity: 0.5 !important;
+            }
+        </style>
         <div class="p-grid">
             <div class="p-col">
                 <div class="card">
                     <h4>Ultra Gym - Subscriptions</h4>
-                    <h:form prependId="false">
+                    <h:form id="mainForm" prependId="false">
                         <p:dataTable id="data" value="#{subscriptionBean.allSubscriptionsList}" var="sub"
                                      selection="#{subscriptionBean.subscription}" rowKey="#{sub.rowId}"
                                      selectionMode="single"
@@ -28,8 +33,10 @@
                                     listener="#{subscriptionBean.selectSubscription}"
                                     oncomplete="PF('subform').show()"/>
                             <p:column headerText="Active" width="5%">
-                                <h:panelGroup rendered="#{not sub.active}" class="fa fa-exclamation-triangle fa-2x" style="color: #c21d12"/>
-                                <h:panelGroup rendered="#{sub.active}" class="fa fa-check-circle fa-2x" style="color: #4acb78"/>
+                                <h:panelGroup rendered="#{not sub.active}" class="fa fa-exclamation-triangle fa-2x"
+                                              style="color: #c21d12"/>
+                                <h:panelGroup rendered="#{sub.active}" class="fa fa-check-circle fa-2x"
+                                              style="color: #4acb78"/>
                             </p:column>
                             <p:column headerText="Member Name"
                                       filterBy="#{subscriptionBean.memebrMap[sub.memberId].fullName}"
@@ -46,12 +53,57 @@
                             <p:column headerText="Start Date" field="startDate"/>
                             <p:column headerText="End Date" field="endDate"/>
                             <p:column headerText="Bonus" field="bonusPeriod"/>
-                            <p:column headerText="Fully Paid?" field="fullPaid"/>
+                            <p:column headerText="Payment" style="font-size: 120%">
+                                <h:panelGroup rendered="#{empty sub.paidAmount or sub.paidAmount le 0}">
+                                    <i class="fa fa-exclamation" style="color:#c21d12;"/>
+                                    <p:spacer width="10"/>
+                                    <h:outputText value="Not Paid"/>
+                                </h:panelGroup>
+
+                                <h:panelGroup rendered="#{sub.paidAmount gt 0 and sub.paidAmount lt sub.finalPrice}">
+                                    <i class="fa fa-question" style="color:#f05136;"/>
+                                    <p:spacer width="10"/>
+                                    <h:outputText value="Partially Paid"/>
+                                </h:panelGroup>
+
+                                <h:panelGroup rendered="#{sub.paidAmount ge sub.finalPrice}">
+                                    <i class="fa fa-check" style="color:#2a9159;"/>
+                                    <p:spacer width="10"/>
+                                    <h:outputText value="Fully Paid"/>
+                                </h:panelGroup>
+                            </p:column>
                         </p:dataTable>
                     </h:form>
                 </div>
             </div>
         </div>
+
+        <p:dialog widgetVar="payment" modal="true" header="Subscription Payment">
+            <h:form id="payment">
+                <p:panelGrid columns="2" layout="grid" style="font-size: 120%!important;">
+                    <p:outputLabel value="Subscription Final Price"/>
+                    <p:inputText readonly="true" value="#{subscriptionBean.subscription.finalPrice}"/>
+
+                    <p:commandButton value="Pay Full" icon="fa fa-exchange"
+                                     update="@form" styleClass="secondary-button"
+                                     actionListener="#{subscriptionBean.subscription.setPaidAmount(subscriptionBean.subscription.finalPrice)}"/>
+                    <p:outputLabel/>
+                    <p:outputLabel value="Paid Amount"/>
+                    <p:inputNumber maxValue="9999.9999" decimalPlaces="4"
+                                   value="#{subscriptionBean.subscription.paidAmount}">
+                        <p:ajax event="keyup" update="remaining"/>
+                    </p:inputNumber>
+
+                    <p:outputLabel value="Remaining Amount To Pay"/>
+                    <p:inputText id="remaining" readonly="true"
+                                 value="#{subscriptionBean.subscription.finalPrice - subscriptionBean.subscription.paidAmount}"/>
+                </p:panelGrid>
+                <p:separator/>
+                <p:commandButton icon="fa fa-save" value="Save Payment Info"
+                                 actionListener="#{subscriptionBean.saveSubscription}"
+                                 update="@form :mainForm :subform:paidAmount" oncomplete="PF('payment').hide()"/>
+            </h:form>
+        </p:dialog>
 
 
         <p:sidebar style="width: 45%" position="right" widgetVar="subform">
@@ -61,67 +113,77 @@
                                      actionListener="#{subscriptionBean.saveSubscription}"
                                      update="@form :data"
                                      oncomplete="if(args &amp;&amp; !args.validationFailed) PF('subform').hide()"/>
-                    <p:commandButton value="Cancel" icon="pi pi-times" update="@form"
-                                     actionListener="#{subscriptionBean.cancel}"
-                                     styleClass="danger-button" oncomplete="PF('subform').hide()"/>
+                    <p:commandButton icon="fa fa-money" value="Payment"
+                                     style="display: block" id="paymentButton"
+                                     update=":payment" styleClass="success-button"
+                                     oncomplete="PF('payment').show()"
+                                     rendered="#{(not empty subscriptionBean.subscription.rowId) and (empty sub.paidAmount or (sub.paidAmount lt sub.finalPrice))}"/>
                 </h:panelGrid>
                 <p:messages>
                     <p:autoUpdate/>
                 </p:messages>
                 <div style="height: 85vh; overflow-y: scroll">
-                    <h3 style="padding: 5px; border-bottom: 1px solid #e1e1e1">Member Info</h3>
+                    <h3 style="padding: 5px; border-bottom: 1px solid #e1e1e1">Member Info - #{subscriptionBean.member.fullName}</h3>
                     <h:panelGrid id="memberGrid" cellspacing="5" columns="1" style="width: 100%">
                         <p:outputLabel rendered="#{empty subscriptionBean.subscription.rowId}" for="@next"
                                        value="Select Member For New Subscription"/>
-                        <p:commandButton icon="fa fa-hand-o-up" value="Choose Member For List" process="@this"
+                        <p:commandButton rendered="#{empty subscriptionBean.subscription.rowId}"
+                                         icon="fa fa-hand-o-up" value="Choose Member For List" process="@this"
                                          oncomplete="PF('members').show()"/>
+                        <p:accordionPanel activeIndex="-1">
+                            <p:tab title="Show/Hide Member Details">
+                                <p:outputLabel for="@next" value="Full Name"/>
+                                <p:inputText readonly="true" value="#{subscriptionBean.member.fullName}"
+                                             style="width: 100%"/>
 
-                        <p:outputLabel for="@next" value="Full Name"/>
-                        <p:inputText readonly="true" value="#{subscriptionBean.member.fullName}"
-                                     style="width: 100%"/>
+                                <p:outputLabel for="@next" value="Type"/>
+                                <p:inputText readonly="true" value="#{subscriptionBean.member.type}"
+                                             style="width: 100%"/>
 
-                        <p:outputLabel for="@next" value="Type"/>
-                        <p:inputText readonly="true" value="#{subscriptionBean.member.type}" style="width: 100%"/>
+                                <p:outputLabel for="@next" value="Mobile Number"/>
+                                <p:inputText readonly="true" style="width: 100%"
+                                             value="#{subscriptionBean.member.mobilePrefix}#{subscriptionBean.member.mobileNumber}"/>
 
-                        <p:outputLabel for="@next" value="Mobile Number"/>
-                        <p:inputText readonly="true" style="width: 100%"
-                                     value="#{subscriptionBean.member.mobilePrefix}#{subscriptionBean.member.mobileNumber}"/>
+                                <p:outputLabel for="@next" value="Birthdate"/>
+                                <p:inputText readonly="true" style="width: 100%"
+                                             value="#{subscriptionBean.member.birthDate}"/>
 
-                        <p:outputLabel for="@next" value="Birthdate"/>
-                        <p:inputText readonly="true" style="width: 100%"
-                                     value="#{subscriptionBean.member.birthDate}"/>
+                                <p:outputLabel for="@next" value="Gender"/>
+                                <p:inputText readonly="true" style="width: 100%"
+                                             value="#{subscriptionBean.member.gender eq 'M' ? 'Male' : 'Female'}"/>
 
-                        <p:outputLabel for="@next" value="Gender"/>
-                        <p:inputText readonly="true" style="width: 100%"
-                                     value="#{subscriptionBean.member.gender eq 'M' ? 'Male' : 'Female'}"/>
+                                <p:outputLabel for="@next" value="Email"/>
+                                <p:inputText readonly="true" style="width: 100%"
+                                             value="#{subscriptionBean.member.email}"/>
 
-                        <p:outputLabel for="@next" value="Email"/>
-                        <p:inputText readonly="true" style="width: 100%" value="#{subscriptionBean.member.email}"/>
+                                <p:outputLabel for="@next" value="Blood Type"/>
+                                <p:inputText readonly="true" style="width: 100%"
+                                             value="#{subscriptionBean.member.bloodType}"/>
 
-                        <p:outputLabel for="@next" value="Blood Type"/>
-                        <p:inputText readonly="true" style="width: 100%"
-                                     value="#{subscriptionBean.member.bloodType}"/>
+                                <p:outputLabel for="@next" value="Medical/Health Issues"/>
+                                <p:inputTextarea readonly="true" rows="5" autoResize="true" style="width: 100%"
+                                                 value="#{subscriptionBean.member.healthProblems}"/>
 
-                        <p:outputLabel for="@next" value="Medical/Health Issues"/>
-                        <p:inputTextarea readonly="true" rows="5" autoResize="true" style="width: 100%"
-                                         value="#{subscriptionBean.member.healthProblems}"/>
+                                <p:outputLabel for="@next" value="Undergoing Medications"/>
+                                <p:inputTextarea readonly="true" rows="5" autoResize="true" style="width: 100%"
+                                                 value="#{subscriptionBean.member.medications}"/>
 
-                        <p:outputLabel for="@next" value="Undergoing Medications"/>
-                        <p:inputTextarea readonly="true" rows="5" autoResize="true" style="width: 100%"
-                                         value="#{subscriptionBean.member.medications}"/>
+                                <h:panelGrid columns="4" cellspacing="5">
+                                    <p:outputLabel value="VIP"/>
+                                    <p:selectBooleanCheckbox disabled="true" value="#{subscriptionBean.member.vip}"/>
 
-                        <h:panelGrid columns="4" cellspacing="5">
-                            <p:outputLabel value="VIP"/>
-                            <p:selectBooleanCheckbox disabled="true" value="#{subscriptionBean.member.vip}"/>
-
-                            <p:outputLabel value="Active"/>
-                            <p:selectBooleanCheckbox disabled="true" value="#{subscriptionBean.member.active}"/>
-                        </h:panelGrid>
+                                    <p:outputLabel value="Active"/>
+                                    <p:selectBooleanCheckbox disabled="true" value="#{subscriptionBean.member.active}"/>
+                                </h:panelGrid>
+                            </p:tab>
+                        </p:accordionPanel>
                     </h:panelGrid>
                     <h3 style="padding: 5px; border-bottom: 1px solid #e1e1e1">Subscription Details</h3>
-                    <h:panelGrid id="subscriptionDetails" cellspacing="5" columns="1" style="width: 100%">
+                    <p:blockUI block="subscriptionDetails" blocked="#{not empty subscriptionBean.subscription.rowId}"/>
+                    <h:panelGrid id="subscriptionDetails" cellspacing="5" columns="2" style="width: 100%">
                         <p:outputLabel for="@next" value="Subscription Model"/>
-                        <p:selectOneMenu style="width: 100%" value="#{subscriptionBean.subscription.type}" requiredMessage="Subscription Model Is Required" required="true">
+                        <p:selectOneMenu style="width: 100%" value="#{subscriptionBean.subscription.type}"
+                                         requiredMessage="Subscription Model Is Required" required="true">
                             <p:ajax update="subscriptionDetails"
                                     listener="#{subscriptionBean.subscription.updateMaximumEntries}"/>
                             <f:selectItem itemLabel="-- Select One --" itemValue=""/>
@@ -137,7 +199,8 @@
                         <p:calendar navigator="true" required="true" requiredMessage="Start Date is required"
                                     pattern="yyyy-MM-dd" style="width: 100%" inputStyle="width: 100%"
                                     value="#{subscriptionBean.subscription.startDate}">
-                            <p:ajax event="dateSelect" update="endDate" listener="#{subscriptionBean.subscription.updateMaximumEntries}" />
+                            <p:ajax event="dateSelect" update="endDate"
+                                    listener="#{subscriptionBean.subscription.updateMaximumEntries}"/>
                         </p:calendar>
 
                         <p:outputLabel for="@next"
@@ -162,7 +225,7 @@
                                        decimalPlaces="2"
                                        style="width: 100%" inputStyle="width: 100%"
                                        value="#{subscriptionBean.subscription.price}">
-                            <p:ajax event="keyup" update="finalPrice"
+                            <p:ajax event="keyup" update="finalPrice paidAmount"
                                     listener="#{subscriptionBean.subscription.calculateDiscount}"/>
                         </p:inputNumber>
 
@@ -170,7 +233,7 @@
                         <p:inputNumber id="discount" required="true" decimalPlaces="2" symbol="%"
                                        style="width: 100%" inputStyle="width: 100%"
                                        value="#{subscriptionBean.subscription.discount}">
-                            <p:ajax event="keyup" update="finalPrice"
+                            <p:ajax event="keyup" update="finalPrice paidAmount"
                                     listener="#{subscriptionBean.subscription.calculateDiscount}"/>
                         </p:inputNumber>
 
@@ -179,10 +242,21 @@
                                        style="width: 100%" inputStyle="width: 100%"
                                        value="#{subscriptionBean.subscription.finalPrice}"/>
 
+                        <p:outputLabel for="@next" value="Paid Amount"/>
+                        <p:inputNumber id="paidAmount"  decimalPlaces="2"
+                                       style="width: 100%" inputStyle="width: 100%"
+                                       maxValue="#{subscriptionBean.subscription.finalPrice}"
+                                       value="#{subscriptionBean.subscription.paidAmount}" >
+                            <p:ajax event="dblclick" update="@this"
+                                    listener="#{subscriptionBean.subscription.setPaidAmount(subscriptionBean.subscription.finalPrice)}" />
+                        </p:inputNumber>
+
                         <p:outputLabel for="@next" value="Remarks"/>
                         <p:inputTextarea rows="5" autoResize="true" style="width: 100%"
                                          placeholder="Notes on subscription"
                                          maxlength="4000" value="#{subscriptionBean.subscription.remarks}"/>
+
+                        <p:tooltip for="paidAmount" value="Double click to pay in full" position="left" />
                     </h:panelGrid>
                 </div>
             </h:form>
@@ -198,7 +272,7 @@
                             <i>Hint:</i> Double click to select member record
                         </small>
                     </f:facet>
-                    <p:ajax event="rowSelect" listener="#{subscriptionBean.selectMember}" />
+                    <p:ajax event="rowSelect" listener="#{subscriptionBean.selectMember}"/>
                     <p:ajax event="rowDblselect" update="@form :subform"/>
                     <p:column field="type" width="10%" filterMatchMode="contains"/>
                     <p:column field="fullName" width="25%" filterMatchMode="contains"/>

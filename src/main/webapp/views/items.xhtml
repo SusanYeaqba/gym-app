@@ -71,6 +71,9 @@
                         <p:outputLabel for="@next" value="On Hand Stock"/>
                         <p:inputNumber inputStyleClass="my-input" value="#{itemsBean.currentItem.onHand}" styleClass="my-input"/>
 
+                        <p:outputLabel for="@next" value="Image"/>
+                        <p:inputText value="#{itemsBean.currentItem.image}" styleClass="my-input"/>
+
                         <p:outputLabel for="@next" value="Blend"/>
                         <p:selectBooleanCheckbox value="#{itemsBean.currentItem.blend}"/>
 

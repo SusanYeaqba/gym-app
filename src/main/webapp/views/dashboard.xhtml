@@ -1,6 +1,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
                 template="/WEB-INF/template.xhtml">
@@ -12,102 +13,183 @@
                 overflow: hidden;
             }
 
-            .memberNumber,.memberNumber input {
+            .memberNumber, .memberNumber input {
                 width: 100% !important;
                 font-size: larger !important;
             }
 
-            .kpi{
+            .kpi {
                 text-align: center;
                 color: black;
             }
-            .ui-panel-titlebar{
+
+            .ui-panel-titlebar {
                 background: #c6353a !important;
                 color: #ffffff !important;
             }
         </style>
-        <div class="p-grid">
-            <div class="p-col">
-                <div class="card">
-                    <h:form rendered="#{loginBean.loggedInUser.staff}" prependId="false">
-                        <p:poll autoStart="true" listener="#{dashboardBean.reloadDashboard}" interval="10" update=":kpi" />
-                        <h4>Ultra Gym - Member Search</h4>
-                        <div class="ui-inputgroup">
-                            <div class="ui-inputgroup-addon"><i class="pi pi-search"></i></div>
-                            <p:inputNumber id="memberNumber" styleClass="memberNumber" decimalPlaces="0" thousandSeparator="" placeholder="Member Number"
-                                         value="#{dashboardBean.memberSearch}">
-                                <p:ajax event="change" update="@this :subDetails"
-                                        listener="#{dashboardBean.searchMember}"
-                                        oncomplete="$('#memberNumber').focus();"/>
-                            </p:inputNumber>
-                        </div>
-                    </h:form>
 
-                    <p:panelGrid id="kpi" columns="4" layout="grid" styleClass="ui-panelgrid-blank">
-                        <p:panel header="Total Members">
-                            <h3 class="kpi">
-                                #{dashboardBean.totalMembers}
-                            </h3>
-                        </p:panel>
-                        <p:panel header="Active Members">
-                            <h3 class="kpi">
-                                #{dashboardBean.activeMembers}
-                            </h3>
-                        </p:panel>
-                        <p:panel header="Checked In Members">
-                            <h3 class="kpi">
-                                #{dashboardBean.checkedIn}
-                            </h3>
-                        </p:panel>
-                        <p:panel header="Active Male Members">
-                            <h3 class="kpi">
-                                #{dashboardBean.maleMembers}
-                            </h3>
-                        </p:panel>
-                        <p:panel header="Active Female Members">
-                            <h3 class="kpi">
-                                #{dashboardBean.femaleMembers}
-                            </h3>
-                        </p:panel>
-                        <p:panel header="Active 1 Month Subscriptions">
-                            <h3 class="kpi">
-                                #{dashboardBean.active1MonthMale} (Male) / #{dashboardBean.active1MonthFemale} (Female)
-                            </h3>
-                        </p:panel>
-                        <p:panel header="Active 3 Month Subscriptions">
-                            <h3 class="kpi">
-                                #{dashboardBean.active3MonthMale} (Male) / #{dashboardBean.active3MonthFemale} (Female)
-                            </h3>
-                        </p:panel>
-                        <p:panel header="Active 6 Month Subscriptions">
-                            <h3 class="kpi">
-                                #{dashboardBean.active6MonthMale} (Male) / #{dashboardBean.active6MonthFemale} (Female)
-                            </h3>
-                        </p:panel>
-                        <p:panel header="Active 1 Year Subscriptions">
-                            <h3 class="kpi">
-                                #{dashboardBean.active1YearMale} (Male) / #{dashboardBean.active1YearFemale} (Female)
-                            </h3>
-                        </p:panel>
-                        <p:panel header="Active 10 Entries Subscriptions">
-                            <h3 class="kpi">
-                                #{dashboardBean.active10EntryMale} (Male) / #{dashboardBean.active10EntryFemale} (Female)
-                            </h3>
-                        </p:panel>
-                        <p:panel header="Active 20 Entries Subscriptions">
-                            <h3 class="kpi">
-                                #{dashboardBean.active20EntryMale} (Male) / #{dashboardBean.active20EntryFemale} (Female)
-                            </h3>
-                        </p:panel>
-                        <p:panel header="Subscriptions Ending This Week">
-                            <h3 class="kpi">
-                                #{dashboardBean.subscriptionsEndingThisWeek}
-                            </h3>
-                        </p:panel>
-                    </p:panelGrid>
+        <p:outputPanel rendered="#{loginBean.loggedInUser.role eq 'Client'}">
+            <div class="p-grid">
+                <div class="p-col">
+                    <div class="card">
+                        <p:panelGrid id="memberData" columns="4" layout="grid" styleClass="ui-panelgrid-blank">
+                            <p:panel header="Mobile Number">
+                                <h3 class="kpi">
+                                    #{loginBean.loggedInUser.member.mobilePrefix}#{loginBean.loggedInUser.member.mobileNumber}
+                                </h3>
+                            </p:panel>
+
+                            <p:panel header="Full Name">
+                                <h3 class="kpi">
+                                    #{loginBean.loggedInUser.member.fullName}
+                                </h3>
+                            </p:panel>
+
+                            <p:panel header="Email">
+                                <h3 class="kpi">
+                                    #{loginBean.loggedInUser.member.email}
+                                </h3>
+                            </p:panel>
+
+                            <p:panel header="Join Date">
+                                <h3 class="kpi">
+                                    #{loginBean.formatDate(loginBean.loggedInUser.member.createdAt)}
+                                </h3>
+                            </p:panel>
+
+                            <p:panel header="Birth Date">
+                                <h3 class="kpi">
+                                    #{loginBean.loggedInUser.member.birthDate}
+                                </h3>
+                            </p:panel>
+
+                            <p:panel header="Gender">
+                                <h3 class="kpi">
+                                    #{loginBean.loggedInUser.member.gender}
+                                </h3>
+                            </p:panel>
+
+                            <p:panel header="Blood Type">
+                                <h3 class="kpi">
+                                    #{loginBean.loggedInUser.member.bloodType}
+                                </h3>
+                            </p:panel>
+                            <p:panel header="Active Subscription?">
+                                <h3 class="kpi">
+                                    <h:outputText
+                                            rendered="#{not empty loginBean.loggedInUser.member.activeSubscription}"
+                                            value="Yes" style="color:#4acb78;"/>
+                                    <h:outputText rendered="#{empty loginBean.loggedInUser.member.activeSubscription}"
+                                                  value="No" style="color:#ff3a07;"/>
+                                </h3>
+                            </p:panel>
+                        </p:panelGrid>
+                        <div class="ui-g ui-g-12">
+                            <p:separator />
+                            <p:dataTable value="#{loginBean.loggedInUser.member.subscriptionList}" var="sub" >
+                                <f:facet name="header">
+                                    <h3 style="color: white">
+                                        <i class="fa fa-history" /> My Subscription History
+                                    </h3>
+                                </f:facet>
+                                <p:column headerText="Sub Type" field="type"/>
+                                <p:column headerText="Start Date" field="startDate"/>
+                                <p:column headerText="End Date" field="endDate"/>
+                                <p:column headerText="Subscription Bonus" field="bonusPeriod"/>
+                                <p:column headerText="Paid" field="fullPaid"/>
+                            </p:dataTable>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
+        </p:outputPanel>
+        <p:outputPanel rendered="#{loginBean.loggedInUser.role ne 'Client'}">
+            <div class="p-grid">
+                <div class="p-col">
+                    <div class="card">
+                        <h:form rendered="#{loginBean.loggedInUser.staff}" prependId="false">
+                            <p:poll autoStart="true" listener="#{dashboardBean.reloadDashboard}" interval="10"
+                                    update=":kpi"/>
+                            <h4>Ultra Gym - Member Search</h4>
+                            <div class="ui-inputgroup">
+                                <div class="ui-inputgroup-addon"><i class="pi pi-search"></i></div>
+                                <p:inputNumber id="memberNumber" styleClass="memberNumber" decimalPlaces="0"
+                                               thousandSeparator="" placeholder="Member Number"
+                                               value="#{dashboardBean.memberSearch}">
+                                    <p:ajax event="change" update="@this :subDetails"
+                                            listener="#{dashboardBean.searchMember}"
+                                            oncomplete="$('#memberNumber').focus();"/>
+                                </p:inputNumber>
+                            </div>
+                        </h:form>
+
+                        <p:panelGrid id="kpi" columns="4" layout="grid" styleClass="ui-panelgrid-blank">
+                            <p:panel header="Total Members">
+                                <h3 class="kpi">
+                                    #{dashboardBean.totalMembers}
+                                </h3>
+                            </p:panel>
+                            <p:panel header="Active Members">
+                                <h3 class="kpi">
+                                    #{dashboardBean.activeMembers}
+                                </h3>
+                            </p:panel>
+                            <p:panel header="Checked In Members">
+                                <h3 class="kpi">
+                                    #{dashboardBean.checkedIn}
+                                </h3>
+                            </p:panel>
+                            <p:panel header="Active Male Members">
+                                <h3 class="kpi">
+                                    #{dashboardBean.maleMembers}
+                                </h3>
+                            </p:panel>
+                            <p:panel header="Active Female Members">
+                                <h3 class="kpi">
+                                    #{dashboardBean.femaleMembers}
+                                </h3>
+                            </p:panel>
+                            <p:panel header="Active 1 Month Subscriptions">
+                                <h3 class="kpi">
+                                    #{dashboardBean.active1MonthMale} (Male) / #{dashboardBean.active1MonthFemale} (Female)
+                                </h3>
+                            </p:panel>
+                            <p:panel header="Active 3 Month Subscriptions">
+                                <h3 class="kpi">
+                                    #{dashboardBean.active3MonthMale} (Male) / #{dashboardBean.active3MonthFemale} (Female)
+                                </h3>
+                            </p:panel>
+                            <p:panel header="Active 6 Month Subscriptions">
+                                <h3 class="kpi">
+                                    #{dashboardBean.active6MonthMale} (Male) / #{dashboardBean.active6MonthFemale} (Female)
+                                </h3>
+                            </p:panel>
+                            <p:panel header="Active 1 Year Subscriptions">
+                                <h3 class="kpi">
+                                    #{dashboardBean.active1YearMale} (Male) / #{dashboardBean.active1YearFemale} (Female)
+                                </h3>
+                            </p:panel>
+                            <p:panel header="Active 10 Entries Subscriptions">
+                                <h3 class="kpi">
+                                    #{dashboardBean.active10EntryMale} (Male) / #{dashboardBean.active10EntryFemale} (Female)
+                                </h3>
+                            </p:panel>
+                            <p:panel header="Active 20 Entries Subscriptions">
+                                <h3 class="kpi">
+                                    #{dashboardBean.active20EntryMale} (Male) / #{dashboardBean.active20EntryFemale} (Female)
+                                </h3>
+                            </p:panel>
+                            <p:panel header="Subscriptions Ending This Week">
+                                <h3 class="kpi">
+                                    #{dashboardBean.subscriptionsEndingThisWeek}
+                                </h3>
+                            </p:panel>
+                        </p:panelGrid>
+                    </div>
+                </div>
+            </div>
+        </p:outputPanel>
 
         <p:sidebar widgetVar="sub" style="width: 30%" position="right" modal="false">
             <h:panelGrid id="subDetails" cellspacing="5" columns="1" style="width: 100%;">

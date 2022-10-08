@@ -44,6 +44,8 @@
                                              placeholder="Search Members (Name, mobile number or email)">
                                     <p:ajax update="data" event="keyup" listener="#{membersBean.loadMembers}"/>
                                 </p:inputText>
+                                <p:spacer width="10" />
+
                             </f:facet>
                         </p:toolbar>
                         <p:dataTable id="data" value="#{membersBean.memberList}" var="mem" selectionMode="single"
@@ -53,8 +55,10 @@
                             <p:ajax event="rowSelect" listener="#{membersBean.selectMember}" update="@parent toolbar"/>
                             <p:ajax event="rowDblselect" listener="#{mem.loadSubscriptions}" update="@parent toolbar"/>
                             <p:column headerText="Subscribed" width="5%">
-                                <h:panelGroup rendered="#{empty mem.activeSubscription}" class="fa fa-exclamation-triangle fa-2x" style="color: #c21d12"/>
-                                <h:panelGroup rendered="#{not empty mem.activeSubscription}" class="fa fa-check-circle fa-2x" style="color: #4acb78"/>
+                                <h:panelGroup rendered="#{empty mem.activeSubscription}"
+                                              class="fa fa-exclamation-triangle fa-2x" style="color: #c21d12"/>
+                                <h:panelGroup rendered="#{not empty mem.activeSubscription}"
+                                              class="fa fa-check-circle fa-2x" style="color: #4acb78"/>
                             </p:column>
                             <p:column field="memberNumber" headerText="Member #" filterMatchMode="contains"/>
                             <p:column field="type" filterMatchMode="contains"/>
@@ -63,7 +67,10 @@
                             <p:column field="email" filterMatchMode="contains"/>
                             <p:column field="gender" filterMatchMode="contains"/>
                             <p:column field="birthDate" filterMatchMode="contains"/>
+                            <p:column field="rating" width="5%"/>
                             <p:column field="vip" width="5%"/>
+                            <p:column field="hasLocker" width="5%" filterable="true"/>
+                            <p:column field="lockerNumber" width="7%"/>
                             <p:column field="active" width="5%"/>
                         </p:dataTable>
                     </h:form>
@@ -78,14 +85,6 @@
                                      actionListener="#{membersBean.saveMember}"
                                      update="@form :data"
                                      oncomplete="if(args &amp;&amp; !args.validationFailed) PF('newMember').hide()"/>
-                    <p:commandButton value="Cancel" icon="pi pi-times" update="@form"
-                                     actionListener="#{membersBean.clearMember}"
-                                     styleClass="danger-button" oncomplete="PF('newMember').hide()"/>
-                    <p:commandButton value="Deactivate Member" update=":data"
-                                     actionListener="#{membersBean.disableMember}"
-                                     oncomplete="PF('newMember').hide()"
-                                     rendered="#{not empty membersBean.currentMember.rowId}"
-                                     icon="pi pi-ban" styleClass="danger-button"/>
 
                     <p:commandButton value="Create User for Member" update=":data"
                                      actionListener="#{membersBean.makeMemberUserAccount}"
@@ -97,6 +96,10 @@
                 </h:panelGrid>
                 <p:scrollPanel style="height: 85vh">
                     <h:panelGrid cellspacing="5" columns="1" style="width: 100%">
+
+                        <p:outputLabel for="@next" value="Member Number"/>
+                        <p:inputText required="true" requiredMessage="Member number is required"
+                                     placeholder="Member number" value="#{membersBean.currentMember.memberNumber}"/>
 
                         <p:outputLabel for="@next" value="Full Name"/>
                         <p:inputText required="true" requiredMessage="Member full name is required"
@@ -159,14 +162,26 @@
                                          placeholder="If member is currently under any medication or undergoing any treatment, please describe here"
                                          maxlength="4000" value="#{membersBean.currentMember.medications}"/>
 
+                        <p:outputLabel for="@next" value="Member Rating"/>
+                        <p:rating stars="5" id="rating" value="#{membersBean.currentMember.rating}"/>
+
                         <h:panelGrid columns="4" cellspacing="5">
                             <p:outputLabel value="VIP"/>
                             <p:selectBooleanCheckbox value="#{membersBean.currentMember.vip}"/>
 
                             <p:outputLabel value="Active"/>
                             <p:selectBooleanCheckbox value="#{membersBean.currentMember.active}"/>
+
+                            <p:outputLabel value="Has Locker"/>
+                            <p:selectBooleanCheckbox value="#{membersBean.currentMember.hasLocker}">
+                                <p:ajax update="lockerNumber" process="@this"/>
+                            </p:selectBooleanCheckbox>
                         </h:panelGrid>
 
+                        <p:outputLabel for="@next" value="Locker Number"/>
+                        <p:inputText id="lockerNumber" disabled="#{not membersBean.currentMember.hasLocker}"
+                                     required="true"
+                                     value="#{membersBean.currentMember.lockerNumber}" placeholder="Locker Number"/>
                     </h:panelGrid>
                 </p:scrollPanel>
             </h:form>

@@ -8,18 +8,32 @@
     <ui:define name="title">Ultra Gym - Shop</ui:define>
 
     <ui:define name="content">
+        <style>
+            .selectedCat {
+                background-color: #e1e1e1 !important;
+                box-shadow: #c43438 0px 0px 5px 5px;
+            }
+        </style>
         <div class="p-grid">
             <div class="p-col">
                 <div class="card">
-                    <h4>Gym Cafeteria &amp; Shop</h4>
                     <h:form>
+                        <h4>
+                            Gym Cafeteria &amp; Shop
+                            <p:commandButton style="float: right" icon="fa fa-history"
+                                             value="Transaction History"
+                                             actionListener="#{shopBean.loadHistory}"
+                                             update=":trxHistory @(.history)" oncomplete="PF('history').show()"/>
+
+                        </h4>
                         <p:carousel style="width: 93vw" value="#{shopBean.categories}" var="cat" numVisible="5"
                                     numScroll="5" circular="true">
                             <f:facet name="header">
                                 <h5>Categories</h5>
                             </f:facet>
                             <p:commandLink update="@form :items" actionListener="#{shopBean.selectCategory(cat)}">
-                                <span style="display: block; text-align: center; background:#{shopBean.currentCategory.rowId eq cat.rowId ? '#FF810E' : ''};">
+                                <span class="#{shopBean.currentCategory.rowId eq cat.rowId ? 'selectedCat' : ''}"
+                                      style="display: block; text-align: center;">
                                 <p:graphicImage height="100" value="#{cat.image}"/>
                             </span>
                                 <h:outputText
@@ -30,32 +44,136 @@
                     </h:form>
                     <br/>
                     <h:form id="items">
-                        <p:dataGrid layout="grid" columns="5" value="#{shopBean.items}" var="item">
-                            <f:facet name="header">
-                                <h5>Products &amp; Items #{not empty shopBean.currentCategory.rowId ? 'In '.concat(shopBean.currentCategory.description) : ''}</h5>
-                                <p:separator/>
-                                <p:inputText style="width: 100%" placeholder="Search Item via Name or Barcode"
-                                             value="#{shopBean.itemSearch}"/>
-                            </f:facet>
-                            <p:commandLink>
-                                <span style="display: block; text-align: center; ">
-                                <p:graphicImage height="100" value="#{item.image}"/>
-                            </span>
-                                <h:outputText
-                                        style="display: block; font-size: larger; text-align: center;  "
-                                        value="#{item.description}"/>
-                                <h:outputText
-                                        style="display: block; font-size: larger; text-align: center;  "
-                                        value="Price: #{item.sellPrice}"/>
-                                <h:outputText
-                                        style="display: block; font-size: larger; text-align: center;  "
-                                        value="Available: #{item.onHand}"/>
-                            </p:commandLink>
-                        </p:dataGrid>
+                        <div class="ui-g">
+                            <div class="ui-g-8">
+                                <p:dataGrid columns="4"  value="#{shopBean.items}" var="item">
+                                    <f:facet name="header">
+                                        <h5>Products &amp; Items #{not empty shopBean.currentCategory.rowId ? 'In '.concat(shopBean.currentCategory.description) : ''}</h5>
+                                        <p:separator/>
+                                        <p:inputText style="width: 100%" placeholder="Search Item via Name or Barcode"
+                                                     value="#{shopBean.itemSearch}">
+                                            <p:ajax event="keyup" listener="#{shopBean.lookupItem}" update="@form"/>
+                                        </p:inputText>
+                                    </f:facet>
+                                    <div style="padding: 5px; border: 1px solid #e1e1e1;height: 250px; width: 250px; ">
+                                        <span style="display: block; text-align: center;position:relative; ">
+                                        <p:graphicImage height="100"
+                                                        value="#{not empty item.image ? item.image : 'https://image.shutterstock.com/image-vector/ui-image-placeholder-wireframes-apps-260nw-1037719204.jpg'}"
+                                                        alt="No Image"/>
+                                            <br />
+                                            <p:tooltip for="add" value="Add to Cart"/>
+                                            <p:commandButton id="add" icon="pi pi-plus"
+                                                             update="@(.cart)"
+                                                             actionListener="#{shopBean.addItem(item)}"
+                                                             styleClass="success-button rounded-button"
+                                                             style="position: absolute; top: 1%; right: 1%"/>
+                                        </span>
+                                        <h:outputText
+                                                style="display: block; font-size: larger;  "
+                                                value="#{item.description}"/>
+                                        <h:outputText
+                                                style="display: block; font-size: larger;color: #4acb78 "
+                                                value="₪ #{item.sellPrice}"/>
+                                        <p:separator/>
+                                        <i> <h:outputText
+                                                style=";display: block; font-size: larger;text-align:center;color: #{item.onHand gt 0 ? '#4acb78' : 'red'} "
+                                                value="#{item.onHand gt 0 ? 'Available' : 'Out of Stock'}"/></i>
+                                    </div>
+                                </p:dataGrid>
+                            </div>
+                            <div class="ui-g-4">
+                                <p:panel id="cart" styleClass="cart">
+                                    <f:facet name="header">
+                                        <p:toolbar id="toolbar" styleClass="cart"
+                                                   style="background: transparent; border: none">
+                                            <f:facet name="left">
+                                                <p:outputLabel value="Total:"/>
+                                                <p:spacer width="5"/>
+                                                <b style="color: #4acb78; font-size: large">#{shopBean.trx.totalAfterDiscount}</b>
+                                            </f:facet>
+                                            <f:facet name="right">
+                                                <p:outputLabel value="Apply Discount (%)"/>
+                                                <p:spacer width="5"/>
+                                                <p:inputNumber decimalPlaces="2" value="#{shopBean.trx.discountPct}"
+                                                               minValue="0" maxValue="1"
+                                                               placeholder="Total Discount">
+                                                    <p:ajax update="@(.cart)" listener="#{shopBean.calculateTrxPrice}"
+                                                            event="keyup"/>
+                                                </p:inputNumber>
+                                            </f:facet>
+                                        </p:toolbar>
+                                        <p:commandButton style="width: 100%" styleClass="success-button"
+                                                         value="Complete Transaction"
+                                                         actionListener="#{shopBean.closeTrx}"
+                                                         update="@form" icon="pi pi-check"
+                                                         disabled="#{shopBean.trxItems.size() lt 1}"/>
+                                    </f:facet>
+                                    <p:dataTable value="#{shopBean.trxItems}" var="tI" scrollRows="5" scrollHeight="300"
+                                                 scrollable="true">
+                                        <p:column headerText="QTY" width="10%" field="qty" sortable="false"/>
+                                        <p:column headerText="Item" width="25%" field="itemDescription"
+                                                  sortable="false"/>
+                                        <p:column headerText="Price" width="10%" field="unitPrice" sortable="false"/>
+                                        <p:column headerText="Discount" width="15%" filterBy="#{tI.lineDiscountPct}">
+                                            <p:inputNumber decimalPlaces="2" value="#{tI.lineDiscountPct}"
+                                                           minValue="0" maxValue="1"
+                                                           placeholder="Discount %">
+                                                <p:ajax update="@(.cart)" listener="#{shopBean.calculateTrxPrice}"
+                                                        event="keyup"/>
+                                            </p:inputNumber>
+                                        </p:column>
+                                        <p:column id="total" styleClass="total" headerText="Total" width="10%"
+                                                  sortable="false"
+                                                  field="finalPrice"/>
+                                        <p:column width="5%">
+                                            <p:commandButton styleClass="danger-button rounded-button"
+                                                             actionListener="#{shopBean.removeItem(tI)}"
+                                                             icon="pi pi-minus" update="@(.cart)"/>
+                                        </p:column>
+                                    </p:dataTable>
+                                </p:panel>
+                            </div>
+                        </div>
                     </h:form>
                 </div>
             </div>
         </div>
+
+        <p:sidebar widgetVar="history" style="width: 40%" position="right">
+            <p:outputPanel id="trxHistory" styleClass="history">
+                <h3>
+                    #{shopBean.transactionHistoryList.size()} Transactions
+                </h3>
+                <p:separator/>
+                <h:form>
+                    <p:dataTable value="#{shopBean.transactionHistoryList}" var="htrx" paginator="true"
+                                 paginatorPosition="bottom" rows="12">
+                        <p:ajax event="rowToggle" listener="#{htrx.loadItems}" update="@(.details)"/>
+                        <p:column style="width:2rem">
+                            <p:rowToggler/>
+                        </p:column>
+                        <p:column field="businessDate" width="20%"/>
+                        <p:column field="totalPrice" width="20%"/>
+                        <p:column field="discountPct" width="20%"/>
+                        <p:column field="totalAfterDiscount" width="20%"/>
+                        <p:rowExpansion>
+                            <p:dataList id="details" styleClass="details" value="#{htrx.items}" var="hItem">
+                                <h:outputText style="font-weight: bold" value="#{hItem.itemDescription}"/>
+                                <p:spacer width="10"/>
+                                <h:outputText value="#{hItem.qty} x"/>
+                                <p:spacer width="5"/>
+                                <h:outputText value="#{hItem.unitPrice}"/>
+                                <p:spacer width="10"/>
+                                <h:outputText style="color: #ff3a07" value=" - #{hItem.lineDiscountPct}%"/>
+                                <p:spacer width="10"/>
+                                <h:outputText value="#{hItem.finalPrice}"/>
+                            </p:dataList>
+                        </p:rowExpansion>
+                    </p:dataTable>
+                </h:form>
+            </p:outputPanel>
+
+        </p:sidebar>
     </ui:define>
 
 </ui:composition>

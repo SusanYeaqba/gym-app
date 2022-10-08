@@ -76,8 +76,8 @@ public class MembersBean extends ParentBean implements Serializable {
                         " or mobile_number like '%" + memberSearchText + "%')";
             }
             memberList = memberDAO.getList(where);
-            for(Member member : memberList){
-                if(member.getActive())
+            for (Member member : memberList) {
+                if (member.getActive())
                     member.loadActiveSubscription();
             }
             hideLoading();
@@ -87,8 +87,13 @@ public class MembersBean extends ParentBean implements Serializable {
     }
 
     public void clearMember() {
-        currentMember = new Member();
-        subscriptionList = null;
+        try {
+            currentMember = new Member();
+            subscriptionList = null;
+            currentMember.setMemberNumber(MainDataSource.executeDecimalResultQuery("select max(member_number) from member").intValue() + 1);
+        } catch (Exception ex) {
+            showFatalMessage(ex);
+        }
     }
 
     public void selectMember(SelectEvent<Member> selectEvent) {
@@ -111,19 +116,18 @@ public class MembersBean extends ParentBean implements Serializable {
             if (isNew) {
                 currentMember.setCreatedBy(user());
                 currentMember.setCreatedAt(now());
-                currentMember.setMemberNumber(MainDataSource.executeDecimalResultQuery("select max(member_number) from member").intValue() + 1);
             }
 
 
-            List<Member> sameNumber = memberDAO.getList("mobile_number = '"+currentMember.getMobileNumber()+"'" +
-                    " and row_id <> '"+currentMember.getRowId()+"'");
-            if(sameNumber != null && !sameNumber.isEmpty()){
+            List<Member> sameNumber = memberDAO.getList("mobile_number = '" + currentMember.getMobileNumber() + "'" +
+                    " and row_id <> '" + currentMember.getRowId() + "'");
+            if (sameNumber != null && !sameNumber.isEmpty()) {
                 showErrorMessage("Mobile number already registered");
                 FacesContext.getCurrentInstance().validationFailed();
                 return;
             }
             memberDAO.saveRecord(currentMember);
-            if(isNew){
+            if (isNew) {
                 memberList.add(0, currentMember);
             }
 
@@ -150,14 +154,14 @@ public class MembersBean extends ParentBean implements Serializable {
         }
     }
 
-    public void makeMemberUserAccount(){
+    public void makeMemberUserAccount() {
         try {
             if (currentMember == null || currentMember.getRowId() == null) {
                 showErrorMessage("No member selected");
                 return;
             }
 
-            if(currentMember.getUserAccount() == null){
+            if (currentMember.getUserAccount() == null) {
                 UserAccount account = new UserAccount();
                 account.setActive(true);
                 account.setRole(currentMember.getType());
@@ -165,14 +169,14 @@ public class MembersBean extends ParentBean implements Serializable {
                 account.setCreatedBy(user());
                 account.setUsername(currentMember.getMobileNumber());
 
-                List<UserAccount> userAccounts = userAccountDAO.getList("username = '"+account.getUsername()+"'");
-                if(userAccounts != null & !userAccounts.isEmpty()){
+                List<UserAccount> userAccounts = userAccountDAO.getList("username = '" + account.getUsername() + "'");
+                if (userAccounts != null & !userAccounts.isEmpty()) {
                     account.setUsername(account.getUsername() + userAccounts.size());
                 }
 
                 account.setPassword(Utilities.getAlphaNumericString(7));
                 userAccountDAO.saveRecord(account);
-                if(account.getRowId() != null){
+                if (account.getRowId() != null) {
                     currentMember.setUserId(account.getRowId());
                     memberDAO.saveRecord(currentMember);
                 }

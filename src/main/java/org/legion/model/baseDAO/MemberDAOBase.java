@@ -50,6 +50,9 @@ entity_record.setVip(rs.getBoolean("vip"));
 entity_record.setActive(rs.getBoolean("active"));
 entity_record.setAge(rs.getInt("age"));
 entity_record.setMemberNumber(rs.getInt("member_number"));
+entity_record.setRating(rs.getBigDecimal("rating"));
+entity_record.setHasLocker(rs.getBoolean("has_locker"));
+entity_record.setLockerNumber(rs.getString("locker_number")); 
         }
        }catch(Exception e){
         logger.error("Error", e); throw e;       }
@@ -67,7 +70,7 @@ catch(SQLException sqlex){logger.error("SQL Error", sqlex); throw sqlex;}       
 Connection con = null;
   PreparedStatement ps = null;
  try{ con = org.legion.util.MainDataSource.getConnection(); 
- ps = con.prepareStatement("INSERT INTO member VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+ ps = con.prepareStatement("INSERT INTO member VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 ps.setString(1,record.getRowId()); 
 ps.setLong(2,record.getCreatedAt()); 
 ps.setString(3,record.getCreatedBy()); 
@@ -91,6 +94,9 @@ ps.setBoolean(19,record.getVip());
 ps.setBoolean(20,record.getActive()); 
 ps.setInt(21,record.getAge()); 
 ps.setInt(22,record.getMemberNumber()); 
+ps.setBigDecimal(23,record.getRating()); 
+ps.setBoolean(24,record.getHasLocker()); 
+ps.setString(25,record.getLockerNumber()); 
 
  int i = ps.executeUpdate();} catch(Exception e){logger.error("Error", e);}
         finally{ 
@@ -115,7 +121,7 @@ ps.setInt(22,record.getMemberNumber());
   public void updateRecord(Member record) { Connection con = null;
  PreparedStatement ps = null;
  try { con = org.legion.util.MainDataSource.getConnection();
- ps = con.prepareStatement("UPDATE member SET row_id = ?, created_at = ?, created_by = ?, updated_at = ?, update_by = ?, deleted_at = ?, deleted_by = ?, type = ?, full_name = ?, gender = ?, email = ?, birth_date = ?, mobile_prefix = ?, mobile_number = ?, blood_type = ?, health_problems = ?, medications = ?, user_id = ?, vip = ?, active = ?, age = ?, member_number = ? WHERE row_id=? ");
+ ps = con.prepareStatement("UPDATE member SET row_id = ?, created_at = ?, created_by = ?, updated_at = ?, update_by = ?, deleted_at = ?, deleted_by = ?, type = ?, full_name = ?, gender = ?, email = ?, birth_date = ?, mobile_prefix = ?, mobile_number = ?, blood_type = ?, health_problems = ?, medications = ?, user_id = ?, vip = ?, active = ?, age = ?, member_number = ?, rating = ?, has_locker = ?, locker_number = ? WHERE row_id=? ");
 ps.setString(1,record.getRowId()); 
 ps.setLong(2,record.getCreatedAt()); 
 ps.setString(3,record.getCreatedBy()); 
@@ -139,7 +145,10 @@ ps.setBoolean(19,record.getVip());
 ps.setBoolean(20,record.getActive()); 
 ps.setInt(21,record.getAge()); 
 ps.setInt(22,record.getMemberNumber()); 
-ps.setString(23,record.getRowId()); 
+ps.setBigDecimal(23,record.getRating()); 
+ps.setBoolean(24,record.getHasLocker()); 
+ps.setString(25,record.getLockerNumber()); 
+ps.setString(26,record.getRowId()); 
    int i = ps.executeUpdate();
  } catch(Exception e){
    logger.error("Error", e);}
@@ -188,6 +197,9 @@ entity_record.setVip(rs.getBoolean("vip"));
 entity_record.setActive(rs.getBoolean("active"));
 entity_record.setAge(rs.getInt("age"));
 entity_record.setMemberNumber(rs.getInt("member_number"));
+entity_record.setRating(rs.getBigDecimal("rating"));
+entity_record.setHasLocker(rs.getBoolean("has_locker"));
+entity_record.setLockerNumber(rs.getString("locker_number")); 
         listOfRecords.add(entity_record);
  }
    }catch(Exception e){logger.error("Error", e);}
@@ -234,6 +246,9 @@ entity_record.setVip(rs.getBoolean("vip"));
 entity_record.setActive(rs.getBoolean("active"));
 entity_record.setAge(rs.getInt("age"));
 entity_record.setMemberNumber(rs.getInt("member_number"));
+entity_record.setRating(rs.getBigDecimal("rating"));
+entity_record.setHasLocker(rs.getBoolean("has_locker"));
+entity_record.setLockerNumber(rs.getString("locker_number")); 
         listOfRecords.add(entity_record);
  }
    }catch(Exception e){logger.error("Error", e); throw e;}

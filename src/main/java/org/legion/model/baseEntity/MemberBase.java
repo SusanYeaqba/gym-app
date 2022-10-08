@@ -36,6 +36,9 @@ private boolean Vip;
 private boolean Active; 
 private Integer Age = 0; 
 private Integer MemberNumber = 0; 
+private BigDecimal Rating = BigDecimal.ZERO; 
+private boolean HasLocker; 
+private String LockerNumber; 
 
     public MemberBase() {
     }
@@ -303,6 +306,40 @@ return this.MemberNumber;}
 
 
 this.MemberNumber = MemberNumber;}
+
+
+ public BigDecimal getRating() {
+return this.Rating;}
+
+
+  public void setRating(BigDecimal Rating) {
+
+
+this.Rating = Rating;}
+
+
+ public boolean getHasLocker() {
+return this.HasLocker;}
+
+
+
+
+  public void setHasLocker(boolean HasLocker) {
+
+
+this.HasLocker = HasLocker;}
+
+
+ public String getLockerNumber() {
+return this.LockerNumber;}
+
+
+
+
+  public void setLockerNumber(String LockerNumber) {
+
+
+this.LockerNumber = LockerNumber;}
 
 
  
