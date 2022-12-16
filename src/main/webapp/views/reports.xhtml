@@ -6,13 +6,90 @@
                 template="/WEB-INF/template.xhtml">
 
     <ui:define name="title">Ultra Gym - Reports</ui:define>
-    
+
     <ui:define name="content">
         <div class="p-grid">
             <div class="p-col">
                 <div class="card">
-                    <h4>Empty Page</h4>
-                    <p>This is your empty page template to start building beautiful applications.</p>
+                    <h4>Reports</h4>
+                    <p:tabView>
+                        <p:tab title="Subscriptions Report">
+                            <h:form>
+                                <p:toolbar>
+                                    <f:facet name="left">
+                                        <p:outputLabel value="From"/>
+                                        <p:spacer width="6"/>
+                                        <p:calendar navigator="true" pattern="dd-MM-yyyy"
+                                                    value="#{reportsBean.fromDate}"/>
+                                        <p:spacer width="6"/>
+                                        <p:outputLabel value="To"/>
+                                        <p:spacer width="6"/>
+                                        <p:calendar navigator="true" pattern="dd-MM-yyyy"
+                                                    value="#{reportsBean.toDate}"/>
+                                        <p:spacer width="6"/>
+                                        <p:outputLabel value="Subscription Type"/>
+                                        <p:spacer width="6"/>
+                                        <p:selectOneMenu value="#{reportsBean.subType}">
+                                            <f:selectItem itemLabel="All Types" itemValue="ALL"/>
+                                            <f:selectItem itemLabel="1 Month" itemValue="1M"/>
+                                            <f:selectItem itemLabel="3 Months" itemValue="3M"/>
+                                            <f:selectItem itemLabel="6 Months" itemValue="6M"/>
+                                            <f:selectItem itemLabel="1 Year" itemValue="1Y"/>
+                                            <f:selectItem itemLabel="10 Entries" itemValue="10E"/>
+                                            <f:selectItem itemLabel="20 Entries" itemValue="20E"/>
+                                        </p:selectOneMenu>
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <p:outputLabel value="Active Only?"/>
+                                        <p:spacer width="2"/>
+                                        <p:selectBooleanCheckbox value="#{reportsBean.activeOnly}"/>
+                                        <p:spacer width="6"/>
+
+                                        <p:commandButton value="Search" icon="pi pi-search" update="@form"
+                                                         onstart="showLoading()"
+                                                         actionListener="#{reportsBean.searchSubs}"/>
+                                        <p:spacer width="6"/>
+
+                                        <p:commandButton value="Export" icon="fa fa-excel">
+                                            <p:dataExporter target="table" type="xlsxstream"
+                                                            fileName="subscriptions_report"/>
+                                        </p:commandButton>
+                                    </f:facet>
+                                </p:toolbar>
+                                <p:dataTable id="table" widgetVar="table" value="#{reportsBean.subscriptionList}"
+                                             var="sub" scrollable="true" scrollRows="30" scrollHeight="400"
+                                             liveScroll="true">
+                                    <p:column headerText="Member #">
+                                        <h:outputText value="#{sub.member.memberNumber}"/>
+                                    </p:column>
+                                    <p:column headerText="Member Name">
+                                        <h:outputText value="#{sub.member.fullName}"/>
+                                    </p:column>
+                                    <p:column headerText="Molbile">
+                                        <h:outputText value="#{sub.member.mobileNumber}"/>
+                                    </p:column>
+                                    <p:column headerText="Type">
+                                        <h:outputText value="#{sub.type}"/>
+                                    </p:column>
+                                    <p:column headerText="Start Date">
+                                        <h:outputText value="#{sub.startDate}"/>
+                                    </p:column>
+                                    <p:column headerText="End Date">
+                                        <h:outputText value="#{sub.endDate}"/>
+                                    </p:column>
+                                    <p:column headerText="Final Price">
+                                        <h:outputText value="#{sub.finalPrice}"/>
+                                    </p:column>
+                                    <p:column headerText="Paid Amt">
+                                        <h:outputText value="#{sub.paidAmount}"/>
+                                    </p:column>
+                                    <p:column headerText="Remaining">
+                                        <h:outputText value="#{sub.paidAmount - sub.finalPrice}"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </h:form>
+                        </p:tab>
+                    </p:tabView>
                 </div>
             </div>
         </div>

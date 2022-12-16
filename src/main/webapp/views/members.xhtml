@@ -33,45 +33,40 @@
                                     <p:commandButton value="Create New Member" icon="pi pi-plus"
                                                      actionListener="#{membersBean.clearMember}" update="memberForm"
                                                      oncomplete="PF('newMember').show()"/>
-                                    <p:commandButton icon="pi pi-pencil" styleClass="success-button"
-                                                     disabled="#{empty membersBean.currentMember.rowId}"
-                                                     value="Edit Member Profile"
-                                                     update="memberForm" oncomplete="PF('newMember').show()"/>
                                 </h:panelGrid>
                             </f:facet>
                             <f:facet name="right">
                                 <p:inputText style="width: 500px;" value="#{membersBean.memberSearchText}"
-                                             placeholder="Search Members (Name, mobile number or email)">
+                                             placeholder="Search Members (Member #, mobile number or email)">
                                     <p:ajax update="data" event="keyup" listener="#{membersBean.loadMembers}"/>
                                 </p:inputText>
                                 <p:spacer width="10" />
 
                             </f:facet>
                         </p:toolbar>
-                        <p:dataTable id="data" value="#{membersBean.memberList}" var="mem" selectionMode="single"
-                                     rowStyleClass="#{mem.active ? 'active' : 'inactive'}"
-                                     rowKey="#{mem.rowId}" selection="#{membersBean.currentMember}"
+                        <p:dataTable id="data" value="#{membersBean.memberList}" var="mem" selectionMode="single" rowKey="#{mem.rowId}"
+                                     rowStyleClass="#{mem.active ? 'active' : 'inactive'}" liveScroll="true"
                                      scrollable="true" scrollRows="20" scrollHeight="350">
-                            <p:ajax event="rowSelect" listener="#{membersBean.selectMember}" update="@parent toolbar"/>
-                            <p:ajax event="rowDblselect" listener="#{mem.loadSubscriptions}" update="@parent toolbar"/>
+                            <p:ajax event="rowSelect" listener="#{membersBean.selectMember}" oncomplete="PF('newMember').show()" update=":memberForm"/>
                             <p:column headerText="Subscribed" width="5%">
                                 <h:panelGroup rendered="#{empty mem.activeSubscription}"
                                               class="fa fa-exclamation-triangle fa-2x" style="color: #c21d12"/>
                                 <h:panelGroup rendered="#{not empty mem.activeSubscription}"
                                               class="fa fa-check-circle fa-2x" style="color: #4acb78"/>
                             </p:column>
-                            <p:column field="memberNumber" headerText="Member #" filterMatchMode="contains"/>
-                            <p:column field="type" filterMatchMode="contains"/>
-                            <p:column field="fullName" filterMatchMode="contains"/>
-                            <p:column field="mobileNumber" filterMatchMode="contains"/>
-                            <p:column field="email" filterMatchMode="contains"/>
-                            <p:column field="gender" filterMatchMode="contains"/>
-                            <p:column field="birthDate" filterMatchMode="contains"/>
-                            <p:column field="rating" width="5%"/>
-                            <p:column field="vip" width="5%"/>
-                            <p:column field="hasLocker" width="5%" filterable="true"/>
-                            <p:column field="lockerNumber" width="7%"/>
-                            <p:column field="active" width="5%"/>
+                            <p:column field="memberNumber" headerText="Member #" filterable="true" filterMatchMode="contains"   />
+                            <p:column field="type" filterable="false" />
+                            <p:column field="fullName" filterable="true" filterMatchMode="contains" />
+                            <p:column field="mobileNumber" ffilterable="true" filterMatchMode="contains"  />
+                            <p:column field="email" filterable="true" filterMatchMode="contains"  />
+                            <p:column field="gender" filterable="false" />
+                            <p:column field="birthDate" filterable="false" />
+                            <p:column field="rating" width="5%" filterable="false"/>
+                            <p:column field="vip" width="5%" filterable="false"/>
+                            <p:column field="hasLocker" width="5%" filterable="false" />
+                            <p:column field="lockerNumber" width="7%" filterable="false"/>
+                            <p:column field="active" width="5%" filterable="false"/>
+                            <p:column field="blackList" width="5%" filterable="false"/>
                         </p:dataTable>
                     </h:form>
                 </div>
@@ -171,6 +166,9 @@
 
                             <p:outputLabel value="Active"/>
                             <p:selectBooleanCheckbox value="#{membersBean.currentMember.active}"/>
+
+                            <p:outputLabel value="Black Listed"/>
+                            <p:selectBooleanCheckbox value="#{membersBean.currentMember.blackList}"/>
 
                             <p:outputLabel value="Has Locker"/>
                             <p:selectBooleanCheckbox value="#{membersBean.currentMember.hasLocker}">

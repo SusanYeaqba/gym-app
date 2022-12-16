@@ -103,6 +103,10 @@ public class SubscriptionBean extends ParentBean implements Serializable {
 
     public void selectMember(SelectEvent<Member> event) {
         member = event.getObject();
+        if (member.getBlackList()) {
+            showErrorMessage("Member is blacklisted, you can't make subscription");
+            return;
+        }
         if (subscription.getRowId() == null) {
             System.out.println("preparing sub");
             subscription.setMemberId(member.getRowId());
@@ -123,9 +127,14 @@ public class SubscriptionBean extends ParentBean implements Serializable {
 
             boolean isNew = subscription.getRowId() == null;
 
-            if(subscription.getType() == null || subscription.getType().isEmpty()){
+            if (subscription.getType() == null || subscription.getType().isEmpty()) {
                 showErrorMessage("Subscription Type Mandatory");
                 FacesContext.getCurrentInstance().validationFailed();
+                return;
+            }
+
+            if (member.getBlackList()) {
+                showErrorMessage("Member is blacklisted, you can't make subscription");
                 return;
             }
 
@@ -134,11 +143,11 @@ public class SubscriptionBean extends ParentBean implements Serializable {
                 subscription.setCreatedAt(now());
                 subscription.setActive(true);
                 member.loadSubscriptions();
-                if (member.getActiveSubscription() != null) {
-                    showWarningMessage("Member already has active subscription!");
-                    executeJS("PF('').hide()");
-                    return;
-                }
+//                if (member.getActiveSubscription() != null) {
+//                    showWarningMessage("Member already has active subscription!");
+//                    executeJS("PF('').hide()");
+//                    return;
+//                }
             }
 
             subscription.setUpdateBy(user());

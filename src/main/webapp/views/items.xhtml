@@ -42,12 +42,19 @@
 
         <!-- New/Edit Item Dialog-->
         <h:form prependId="false">
-            <p:dialog header="New/Edit Item" widgetVar="item-form" width="800" modal="true" blockScroll="true">
+            <p:sidebar position="right" style="width: 50%" widgetVar="item-form" modal="true" blockScroll="true">
+                <h3>New/Edit Product</h3>
                 <p:messages>
                     <p:autoUpdate/>
                 </p:messages>
                 <p:separator/>
-                <p:scrollPanel id="item-form" style="height: 400px;width: 100%">
+                <p:commandButton icon="pi pi-save" actionListener="#{itemsBean.saveItem}"
+                                 update=":items" value="Save" styleClass="p-mr-2"
+                                 oncomplete="if(args &amp;&amp; !args.validationFailed) PF('item-form').hide()"/>
+                <p:commandButton icon="pi pi-ban" resetValues="true" value="Cancel"
+                                 styleClass="danger-button" oncomplete="PF('item-form').hide()"/>
+                <p:separator/>
+                <p:scrollPanel id="item-form" style="height: 80vh;width: 100%">
                     <p:autoUpdate/>
 
                     <p:panelGrid layout="flex" columns="2" style="width: inherit!important;">
@@ -72,7 +79,11 @@
                         <p:inputNumber inputStyleClass="my-input" value="#{itemsBean.currentItem.onHand}" styleClass="my-input"/>
 
                         <p:outputLabel for="@next" value="Image"/>
-                        <p:inputText value="#{itemsBean.currentItem.image}" styleClass="my-input"/>
+                        <p:fileUpload auto="true" listener="#{itemsBean.currentItem.uploadImage}" sizeLimit="10485760" fileLimit="1"
+                                   mode="advanced"   allowTypes="/(\.|\/)(gif|jpe?g|png)$/" />
+
+                        <p:outputLabel value="Image Preview" />
+                        <p:graphicImage value="#{itemsBean.currentItem.image}" width="150" height="150" />
 
                         <p:outputLabel for="@next" value="Blend"/>
                         <p:selectBooleanCheckbox value="#{itemsBean.currentItem.blend}"/>
@@ -81,15 +92,13 @@
                         <p:selectBooleanCheckbox value="#{itemsBean.currentItem.active}"/>
                     </p:panelGrid>
                 </p:scrollPanel>
-                <f:facet name="footer">
-                    <p:separator/>
-                    <p:commandButton icon="pi pi-save" actionListener="#{itemsBean.saveItem}"
-                                     update=":items" value="Save" styleClass="p-mr-2"
-                                     oncomplete="if(args &amp;&amp; !args.validationFailed) PF('item-form').hide()"/>
-                    <p:commandButton icon="pi pi-ban" resetValues="true" value="Cancel"
-                                     styleClass="danger-button" oncomplete="PF('item-form').hide()"/>
-                </f:facet>
-            </p:dialog>
+                <p:separator/>
+                <p:commandButton icon="pi pi-save" actionListener="#{itemsBean.saveItem}"
+                                 update=":items" value="Save" styleClass="p-mr-2"
+                                 oncomplete="if(args &amp;&amp; !args.validationFailed) PF('item-form').hide()"/>
+                <p:commandButton icon="pi pi-ban" resetValues="true" value="Cancel"
+                                 styleClass="danger-button" oncomplete="PF('item-form').hide()"/>
+            </p:sidebar>
         </h:form>
 
 

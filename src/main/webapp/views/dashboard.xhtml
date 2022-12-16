@@ -122,6 +122,11 @@
                                             oncomplete="$('#memberNumber').focus();"/>
                                 </p:inputNumber>
                             </div>
+
+                            <p:defaultCommand target="@next" />
+                            <p:commandButton update="@this :subDetails" style="visibility: hidden"
+                                             actionListener="#{dashboardBean.searchMember}"
+                                             oncomplete="$('#memberNumber').focus();" />
                         </h:form>
 
                         <p:panelGrid id="kpi" columns="4" layout="grid" styleClass="ui-panelgrid-blank">

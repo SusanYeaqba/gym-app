@@ -3,18 +3,23 @@ package org.legion.model.entity;
 import java.math.BigDecimal;
 import java.util.*;
 
+import javafx.scene.Parent;
 import lombok.Getter;
 import lombok.Setter;
 import org.legion.model.baseEntity.SubscriptionBase;
 import org.legion.model.dao.SubscriptionDAO;
 import org.legion.ui_beans.ParentBean;
 import org.legion.util.SystemParams;
+import org.primefaces.PrimeFaces;
 
 @Getter
 @Setter
 public class Subscription extends SubscriptionBase {
 
     String gender = "M";
+    String deletePassword = "";
+
+    Member member;
 
 
     @Override
@@ -92,6 +97,16 @@ public class Subscription extends SubscriptionBase {
             setFinalPrice(getPrice());
         }
     }
+    public void calculateDiscountFromPrice() {
+        if (getFinalPrice() != null ) {
+            double discountD = getFinalPrice().doubleValue() / getPrice().doubleValue();
+            discountD *= 100;
+            discountD = 100 - discountD;
+
+            setDiscount(BigDecimal.valueOf(discountD));
+            System.out.println(getDiscount());
+        }
+    }
 
     public void consumeEntry() {
         if(getConsumedEntryCount().compareTo(getMaxEntryCount()) < 0){
@@ -105,6 +120,16 @@ public class Subscription extends SubscriptionBase {
 
         new SubscriptionDAO().saveRecord(this);
         new ParentBean().showInfoMessage("Entry Consumed Successfully!");
+    }
+
+    public void deleteSubscription(){
+        if(deletePassword.equals("Secret!Delete?")){
+            new SubscriptionDAO().deleteRecord(this.getRowId());
+            deletePassword = "";
+            PrimeFaces.current().executeScript("window.location.reload()");
+        }else{
+            new ParentBean().showErrorMessage("Delete secret is incorrect!");
+        }
     }
 
 }

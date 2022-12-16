@@ -24,8 +24,8 @@
                     <p:menuitem rendered="#{loginBean.loggedInUser.staff}" id="om_members" value="Members" icon="pi pi-users" outcome="/views/members"/>
                     <p:menuitem rendered="#{loginBean.loggedInUser.staff}" id="om_subscriptions" value="Subscriptions" icon="pi pi-tags" outcome="/views/subscriptions"/>
                     <p:menuitem rendered="#{loginBean.loggedInUser.staff}" id="om_shop" value="Gym Shop" icon="pi pi-shopping-cart" outcome="/views/shop"/>
-                    <p:menuitem rendered="#{loginBean.loggedInUser.admin}" disabled="true" id="om_billing" value="Billing (Soon)" icon="pi pi-money-bill" outcome="/views/billing"/>
-                    <p:menuitem rendered="#{loginBean.loggedInUser.staff}" disabled="true" id="om_reports" value="Reports (Soon)" icon="pi pi-chart-line" outcome="/views/reports"/>
+                    <p:menuitem rendered="#{loginBean.loggedInUser.admin and false}" disabled="true" id="om_billing" value="Billing (Soon)" icon="pi pi-money-bill" outcome="/views/billing"/>
+                    <p:menuitem rendered="#{loginBean.loggedInUser.staff}" id="om_reports" value="Reports" icon="pi pi-chart-line" outcome="/views/reports"/>
                     <p:menuitem rendered="#{loginBean.loggedInUser.admin}" id="om_settings" value="Settings" icon="pi pi-cog" outcome="/views/settings"/>
                     <p:menuitem rendered="#{loginBean.loggedInUser.admin}" id="om_items" value="Shop Items Setup" icon="pi pi-list" outcome="/views/items"/>
                     <p:menuitem rendered="#{loginBean.loggedInUser.admin}" id="presignup" value="[Temporary] Pre-Signup List" icon="pi pi-user-edit" outcome="/views/presignup"/>

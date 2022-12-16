@@ -14,7 +14,9 @@
         <servlet-name>Faces Servlet</servlet-name>
         <url-pattern>*.xhtml</url-pattern>
     </servlet-mapping>
-
+    <session-config>
+        <session-timeout>-1</session-timeout>
+    </session-config>
     <listener>
         <listener-class>
             org.legion.context.Bootstrap

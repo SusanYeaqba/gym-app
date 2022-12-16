@@ -22,7 +22,9 @@ import javax.faces.model.SelectItem;
 import javax.inject.Named;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Named
 @ViewScoped
@@ -48,6 +50,8 @@ public class MembersBean extends ParentBean implements Serializable {
 
     UserAccountDAO userAccountDAO;
 
+    Map<String, Subscription> subMap = new HashMap<>();
+
     @PostConstruct
     public void init() {
         try {
@@ -56,11 +60,19 @@ public class MembersBean extends ParentBean implements Serializable {
             subscriptionDAO = new SubscriptionDAO();
             userAccountDAO = new UserAccountDAO();
 
-            loadMembers();
 
             preSignupList = preSignupDAO.getList();
             preSignupListFiltered = new ArrayList<>();
             preSignupListFiltered.addAll(preSignupList);
+
+            List<Subscription> subscriptionListActive = new SubscriptionDAO().getList(" getdate() < end_date and active = 1");
+            for(Subscription sub : subscriptionListActive){
+                subMap.put(sub.getMemberId(), sub);
+            }
+
+            loadMembers();
+
+
         } catch (Exception ex) {
             showFatalMessage(ex);
         }
@@ -71,15 +83,16 @@ public class MembersBean extends ParentBean implements Serializable {
             String where = "1=1";
             if (memberSearchText != null && !memberSearchText.isEmpty() && memberSearchText.length() >= 3) {
                 where += " and (LOWER(full_name) like '%" + memberSearchText.toLowerCase() + "%' " +
-                        " or " +
-                        " LOWER(email) like '%" + memberSearchText + "%'" +
+                        " or cast(member_number as nvarchar) = '"+memberSearchText+"'" +
+                        " or LOWER(email) like '%" + memberSearchText + "%'" +
                         " or mobile_number like '%" + memberSearchText + "%')";
             }
             memberList = memberDAO.getList(where);
             for (Member member : memberList) {
                 if (member.getActive())
-                    member.loadActiveSubscription();
+                    member.setActiveSubscription(subMap.get(member.getRowId()));
             }
+            currentMember = null;
             hideLoading();
         } catch (Exception ex) {
             showFatalMessage(ex);
@@ -99,7 +112,7 @@ public class MembersBean extends ParentBean implements Serializable {
     public void selectMember(SelectEvent<Member> selectEvent) {
         try {
             currentMember = selectEvent.getObject();
-//            subscriptionList = subscriptionDAO.getList("member_id = '" + currentMember.getRowId() + "' order by end_date desc");
+            System.out.println(currentMember.getMemberNumber());
             hideLoading();
         } catch (Exception ex) {
             showFatalMessage(ex);
@@ -126,6 +139,15 @@ public class MembersBean extends ParentBean implements Serializable {
                 FacesContext.getCurrentInstance().validationFailed();
                 return;
             }
+
+            List<Member> sameMemberNumber = memberDAO.getList("member_number = '" + currentMember.getMemberNumber() + "'" +
+                    " and row_id <> '" + currentMember.getRowId() + "'");
+            if (sameMemberNumber != null && !sameMemberNumber.isEmpty()) {
+                showErrorMessage("Member number already registered");
+                FacesContext.getCurrentInstance().validationFailed();
+                return;
+            }
+
             memberDAO.saveRecord(currentMember);
             if (isNew) {
                 memberList.add(0, currentMember);
