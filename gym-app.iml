@@ -39,7 +39,7 @@
     <orderEntry type="library" name="Maven: org.primefaces:primefaces:10.0.0" level="project" />
     <orderEntry type="library" name="Maven: org.primefaces.extensions:primefaces-extensions:10.0.0" level="project" />
     <orderEntry type="library" name="Maven: org.omnifaces:omnifaces:3.9" level="project" />
-    <orderEntry type="library" name="Maven: org.projectlombok:lombok:1.18.24" level="project" />
+    <orderEntry type="library" name="Maven: org.projectlombok:lombok:1.18.28" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-simple:2.0.0-alpha1" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:2.0.0-alpha1" level="project" />
     <orderEntry type="library" name="Maven: com.zaxxer:HikariCP:4.0.1" level="project" />

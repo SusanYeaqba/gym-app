@@ -29,7 +29,7 @@
             }
         </style>
 
-        <p:outputPanel rendered="#{loginBean.loggedInUser.role eq 'Client'}">
+        <p:outputPanel rendered="#{loginBean.loggedInUser.client}">
             <div class="p-grid">
                 <div class="p-col">
                     <div class="card">
@@ -86,11 +86,11 @@
                             </p:panel>
                         </p:panelGrid>
                         <div class="ui-g ui-g-12">
-                            <p:separator />
-                            <p:dataTable value="#{loginBean.loggedInUser.member.subscriptionList}" var="sub" >
+                            <p:separator/>
+                            <p:dataTable value="#{loginBean.loggedInUser.member.subscriptionList}" var="sub">
                                 <f:facet name="header">
                                     <h3 style="color: white">
-                                        <i class="fa fa-history" /> My Subscription History
+                                        <i class="fa fa-history"/> My Subscription History
                                     </h3>
                                 </f:facet>
                                 <p:column headerText="Sub Type" field="type"/>
@@ -104,7 +104,7 @@
                 </div>
             </div>
         </p:outputPanel>
-        <p:outputPanel rendered="#{loginBean.loggedInUser.role ne 'Client'}">
+        <p:outputPanel rendered="#{loginBean.loggedInUser.staff}">
             <div class="p-grid">
                 <div class="p-col">
                     <div class="card">
@@ -123,10 +123,10 @@
                                 </p:inputNumber>
                             </div>
 
-                            <p:defaultCommand target="@next" />
+                            <p:defaultCommand target="@next"/>
                             <p:commandButton update="@this :subDetails" style="visibility: hidden"
                                              actionListener="#{dashboardBean.searchMember}"
-                                             oncomplete="$('#memberNumber').focus();" />
+                                             oncomplete="$('#memberNumber').focus();"/>
                         </h:form>
 
                         <p:panelGrid id="kpi" columns="4" layout="grid" styleClass="ui-panelgrid-blank">
@@ -191,6 +191,36 @@
                                 </h3>
                             </p:panel>
                         </p:panelGrid>
+                    </div>
+                </div>
+            </div>
+        </p:outputPanel>
+        <p:outputPanel rendered="#{loginBean.loggedInUser.partner}">
+            <div class="p-grid">
+                <div class="p-col">
+                    <div class="card">
+                        <h1>Active Members in The GYM</h1>
+                        <h:form>
+                            <p:dataTable id="table" widgetVar="table" value="#{partnerBean.members}"
+                                         var="member" scrollable="true" scrollRows="30" scrollHeight="400"
+                                         liveScroll="true">
+                                <p:column headerText="Member #" filterMatchMode="contains"
+                                          filterBy="#{member.memberNumber}">
+                                    <h:outputText value="#{member.memberNumber}"/>
+                                </p:column>
+                                <p:column headerText="Member Name" filterMatchMode="contains"
+                                          filterBy="#{member.fullName}">
+                                    <h:outputText value="#{member.fullName}" />
+                                </p:column>
+                                <p:column headerText="Molbile" filterMatchMode="contains"
+                                          filterBy="#{member.mobileNumber}">
+                                    <h:outputText value="#{member.mobileNumber}" />
+                                </p:column>
+                                <p:column headerText="Join Date"  >
+                                    <h:outputText value="#{partnerBean.formatDate(member.createdAt)}" />
+                                </p:column>
+                            </p:dataTable>
+                        </h:form>
                     </div>
                 </div>
             </div>

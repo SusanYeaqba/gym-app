@@ -25,6 +25,10 @@ public class UserAccount extends UserAccountBase {
         return super.getRole().equals("Manager");
     }
 
+    public boolean isPartner() {
+        return super.getRole().equals("Partner");
+    }
+
     public boolean isClient() {
         return super.getRole().equals("Client");
     }
